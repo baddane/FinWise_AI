@@ -6,7 +6,11 @@ import anthropic
 from app.config import settings
 from app.services.financial_service import get_spending_summary, get_budget_status, get_income_vs_expense
 
-client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+def _get_client() -> anthropic.Anthropic:
+    if not settings.anthropic_api_key:
+        raise RuntimeError("ANTHROPIC_API_KEY environment variable is not set")
+    return anthropic.Anthropic(api_key=settings.anthropic_api_key)
+
 
 SYSTEM_PROMPT = """You are FinWise, an expert AI financial advisor. You help users:
 - Analyze their spending patterns and provide actionable insights
@@ -33,7 +37,7 @@ async def chat_with_ai(
 
     system_with_context = f"{SYSTEM_PROMPT}\n\nUser's Current Financial Context:\n{financial_context}"
 
-    response = client.messages.create(
+    response = _get_client().messages.create(
         model="claude-sonnet-4-6",
         max_tokens=1024,
         system=system_with_context,
@@ -49,7 +53,7 @@ async def chat_with_ai(
 async def generate_financial_analysis(db: Session, user_id: int) -> str:
     financial_context = _get_financial_context(db, user_id)
 
-    response = client.messages.create(
+    response = _get_client().messages.create(
         model="claude-sonnet-4-6",
         max_tokens=2048,
         system=SYSTEM_PROMPT,
