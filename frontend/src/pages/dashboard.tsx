@@ -43,53 +43,86 @@ export default function DashboardPage() {
   if (isLoading || !isAuthenticated) return null;
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-surface-50">
       <Sidebar onLogout={handleLogout} />
-      <main className="ml-64 flex-1 p-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 mt-1">Your financial overview</p>
+      <main className="ml-[260px] flex-1 p-8 max-w-[1200px]">
+        {/* Header */}
+        <div className="mb-8 animate-fade-in">
+          <h1 className="text-2xl font-bold text-surface-900">Dashboard</h1>
+          <p className="text-sm text-surface-400 mt-1">Your financial overview at a glance</p>
         </div>
 
-        <div className="grid grid-cols-4 gap-4 mb-8">
-          <StatCard
-            title="Total Expenses"
-            value={`$${spending?.total_expenses.toFixed(2) ?? "0.00"}`}
-            icon={<TrendingDown size={20} />}
-          />
-          <StatCard
-            title="Transactions"
-            value={String(spending?.transaction_count ?? 0)}
-            icon={<DollarSign size={20} />}
-          />
-          <StatCard
-            title="Active Budgets"
-            value={String(budgets.length)}
-            icon={<Wallet size={20} />}
-          />
-          <StatCard
-            title="Over Budget"
-            value={String(budgets.filter((b) => b.is_over_budget).length)}
-            changeType="negative"
-            icon={<TrendingUp size={20} />}
-          />
+        {/* Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="animate-slide-up [animation-delay:0ms]">
+            <StatCard
+              title="Total Expenses"
+              value={`$${spending?.total_expenses.toFixed(2) ?? "0.00"}`}
+              icon={<TrendingDown size={18} />}
+              changeType="negative"
+            />
+          </div>
+          <div className="animate-slide-up [animation-delay:50ms]">
+            <StatCard
+              title="Transactions"
+              value={String(spending?.transaction_count ?? 0)}
+              icon={<DollarSign size={18} />}
+            />
+          </div>
+          <div className="animate-slide-up [animation-delay:100ms]">
+            <StatCard
+              title="Active Budgets"
+              value={String(budgets.length)}
+              icon={<Wallet size={18} />}
+            />
+          </div>
+          <div className="animate-slide-up [animation-delay:150ms]">
+            <StatCard
+              title="Over Budget"
+              value={String(budgets.filter((b) => b.is_over_budget).length)}
+              changeType="negative"
+              icon={<TrendingUp size={18} />}
+            />
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 mb-8">
-          <SpendingChart data={[]} />
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="animate-slide-up [animation-delay:200ms]">
+            <SpendingChart data={[]} />
+          </div>
           {spending?.by_category && Object.keys(spending.by_category).length > 0 && (
-            <CategoryPieChart data={spending.by_category} />
+            <div className="animate-slide-up [animation-delay:250ms]">
+              <CategoryPieChart data={spending.by_category} />
+            </div>
           )}
         </div>
 
+        {/* Budget Status */}
         {budgets.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h3 className="text-base font-semibold text-gray-900 mb-4">Budget Status</h3>
-            <div className="space-y-4">
+          <div className="card p-6 animate-slide-up [animation-delay:300ms]">
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold text-surface-900">Budget Status</h3>
+              <p className="text-xs text-surface-400 mt-0.5">Track your spending limits</p>
+            </div>
+            <div className="divide-y divide-surface-100">
               {budgets.map((budget) => (
                 <BudgetProgress key={budget.budget_id} budget={budget} />
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!isDataLoading && !spending?.transaction_count && budgets.length === 0 && (
+          <div className="card p-12 text-center animate-fade-in">
+            <div className="w-16 h-16 rounded-2xl bg-brand-50 flex items-center justify-center mx-auto mb-4">
+              <Wallet className="w-8 h-8 text-brand-500" />
+            </div>
+            <h3 className="text-lg font-semibold text-surface-800">No data yet</h3>
+            <p className="text-sm text-surface-400 mt-1 max-w-sm mx-auto">
+              Start by adding transactions and budgets to see your financial overview here.
+            </p>
           </div>
         )}
       </main>

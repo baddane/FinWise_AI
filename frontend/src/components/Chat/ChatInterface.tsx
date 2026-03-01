@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User } from "lucide-react";
+import { Send, Bot, User, Sparkles } from "lucide-react";
 import { ChatMessage } from "@/types";
 import { chatApi } from "@/services/api";
 import { clsx } from "clsx";
@@ -45,58 +45,96 @@ export function ChatInterface() {
     }
   };
 
+  const suggestions = [
+    "How can I save more money?",
+    "Analyze my spending habits",
+    "Help me create a budget",
+  ];
+
   return (
-    <div className="flex flex-col h-full bg-white rounded-xl border border-gray-200">
-      <div className="p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900">FinWise AI Advisor</h2>
-        <p className="text-sm text-gray-500">Ask me anything about your finances</p>
+    <div className="flex flex-col h-full bg-white rounded-2xl border border-surface-200/60 shadow-card overflow-hidden">
+      {/* Header */}
+      <div className="px-6 py-4 border-b border-surface-100 bg-gradient-to-r from-white to-brand-50/30">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-brand-500 flex items-center justify-center shadow-sm">
+            <Sparkles className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <h2 className="text-sm font-semibold text-surface-900">FinWise AI Advisor</h2>
+            <p className="text-[11px] text-surface-400">Powered by Claude</p>
+          </div>
+        </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
         {messages.length === 0 && (
-          <div className="text-center text-gray-400 mt-8">
-            <Bot size={40} className="mx-auto mb-3 text-green-400" />
-            <p className="font-medium">How can I help with your finances today?</p>
-            <p className="text-sm mt-1">Ask about budgets, spending, or investment tips</p>
+          <div className="flex flex-col items-center justify-center h-full text-center animate-fade-in">
+            <div className="w-16 h-16 rounded-2xl bg-brand-50 flex items-center justify-center mb-4">
+              <Bot className="w-8 h-8 text-brand-500" />
+            </div>
+            <h3 className="text-lg font-semibold text-surface-800">
+              How can I help with your finances?
+            </h3>
+            <p className="text-sm text-surface-400 mt-1 max-w-sm">
+              Ask me about budgets, spending habits, saving strategies, or get personalized advice.
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-2 mt-6">
+              {suggestions.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setInput(s)}
+                  className="text-xs font-medium text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-100 rounded-full px-4 py-2 transition-colors"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
           </div>
         )}
+
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={clsx("flex gap-3", msg.role === "user" ? "justify-end" : "justify-start")}
+            className={clsx(
+              "flex gap-3 animate-slide-up",
+              msg.role === "user" ? "justify-end" : "justify-start"
+            )}
           >
             {msg.role === "assistant" && (
-              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
-                <Bot size={16} className="text-green-600" />
+              <div className="w-7 h-7 rounded-lg bg-brand-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Bot size={14} className="text-brand-600" />
               </div>
             )}
             <div
               className={clsx(
-                "max-w-[80%] rounded-2xl px-4 py-3 text-sm",
+                "max-w-[75%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed",
                 msg.role === "user"
-                  ? "bg-green-600 text-white rounded-br-none"
-                  : "bg-gray-100 text-gray-900 rounded-bl-none"
+                  ? "bg-brand-600 text-white rounded-br-md"
+                  : "bg-surface-50 text-surface-800 rounded-bl-md border border-surface-100"
               )}
             >
               <p className="whitespace-pre-wrap">{msg.content}</p>
             </div>
             {msg.role === "user" && (
-              <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                <User size={16} className="text-gray-600" />
+              <div className="w-7 h-7 rounded-lg bg-surface-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <User size={14} className="text-surface-500" />
               </div>
             )}
           </div>
         ))}
+
         {isLoading && (
-          <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-              <Bot size={16} className="text-green-600" />
+          <div className="flex gap-3 animate-fade-in">
+            <div className="w-7 h-7 rounded-lg bg-brand-50 flex items-center justify-center">
+              <Bot size={14} className="text-brand-600" />
             </div>
-            <div className="bg-gray-100 rounded-2xl rounded-bl-none px-4 py-3">
-              <div className="flex gap-1">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+            <div className="bg-surface-50 border border-surface-100 rounded-2xl rounded-bl-md px-4 py-3">
+              <div className="flex gap-1.5">
+                <div className="w-1.5 h-1.5 bg-surface-400 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                <div className="w-1.5 h-1.5 bg-surface-400 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                <div className="w-1.5 h-1.5 bg-surface-400 rounded-full animate-bounce" />
               </div>
             </div>
           </div>
@@ -104,22 +142,29 @@ export function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 border-t border-gray-200">
-        <div className="flex gap-2">
+      {/* Input */}
+      <div className="px-5 py-4 border-t border-surface-100 bg-surface-50/50">
+        <div className="flex items-end gap-3">
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask about your finances..."
             rows={1}
-            className="flex-1 resize-none rounded-xl border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="flex-1 resize-none rounded-xl border border-surface-200 bg-white
+                       px-4 py-2.5 text-sm text-surface-800 placeholder:text-surface-400
+                       focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-400
+                       transition-all duration-200"
           />
           <button
             onClick={sendMessage}
             disabled={!input.trim() || isLoading}
-            className="p-2 bg-green-600 text-white rounded-xl hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="p-2.5 bg-gradient-to-r from-brand-600 to-brand-500 text-white rounded-xl
+                       hover:from-brand-700 hover:to-brand-600 shadow-sm hover:shadow-md
+                       disabled:opacity-40 disabled:cursor-not-allowed
+                       transition-all duration-200 active:scale-95"
           >
-            <Send size={18} />
+            <Send size={16} />
           </button>
         </div>
       </div>

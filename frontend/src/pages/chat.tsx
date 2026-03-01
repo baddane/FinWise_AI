@@ -22,12 +22,12 @@ export default function ChatPage() {
   if (isLoading || !isAuthenticated) return null;
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-surface-50">
       <Sidebar onLogout={handleLogout} />
-      <main className="ml-64 flex-1 p-8">
+      <main className="ml-[260px] flex-1 p-8 max-w-[1000px] animate-fade-in">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">AI Advisor</h1>
-          <p className="text-gray-500 mt-1">Get personalized financial advice</p>
+          <h1 className="text-2xl font-bold text-surface-900">AI Advisor</h1>
+          <p className="text-sm text-surface-400 mt-1">Get personalized financial advice</p>
         </div>
         <div style={{ height: "calc(100vh - 180px)" }}>
           <ChatInterface />

@@ -1,3 +1,5 @@
+import { clsx } from "clsx";
+
 interface StatCardProps {
   title: string;
   value: string;
@@ -6,22 +8,40 @@ interface StatCardProps {
   icon?: React.ReactNode;
 }
 
-export function StatCard({ title, value, change, changeType = "neutral", icon }: StatCardProps) {
-  const changeColors = {
-    positive: "text-green-600",
-    negative: "text-red-600",
-    neutral: "text-gray-500",
-  };
+const iconContainerColors = {
+  positive: "bg-emerald-50 text-emerald-600",
+  negative: "bg-red-50 text-red-500",
+  neutral: "bg-brand-50 text-brand-600",
+};
 
+export function StatCard({ title, value, change, changeType = "neutral", icon }: StatCardProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6">
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-sm font-medium text-gray-500">{title}</p>
-        {icon && <div className="text-gray-400">{icon}</div>}
+    <div className="card p-5 group">
+      <div className="flex items-start justify-between mb-3">
+        <p className="text-[13px] font-medium text-surface-500">{title}</p>
+        {icon && (
+          <div
+            className={clsx(
+              "w-9 h-9 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110",
+              iconContainerColors[changeType]
+            )}
+          >
+            {icon}
+          </div>
+        )}
       </div>
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
+      <p className="text-[26px] font-bold text-surface-900 tracking-tight">{value}</p>
       {change && (
-        <p className={`text-sm mt-1 ${changeColors[changeType]}`}>{change}</p>
+        <p
+          className={clsx(
+            "text-xs font-medium mt-1.5",
+            changeType === "positive" && "text-emerald-600",
+            changeType === "negative" && "text-red-500",
+            changeType === "neutral" && "text-surface-500"
+          )}
+        >
+          {change}
+        </p>
       )}
     </div>
   );
