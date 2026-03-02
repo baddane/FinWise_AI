@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { DollarSign, TrendingDown, TrendingUp, Wallet } from "lucide-react";
@@ -9,7 +7,7 @@ import { BudgetProgress } from "@/components/Dashboard/BudgetProgress";
 import { SpendingChart } from "@/components/Charts/SpendingChart";
 import { CategoryPieChart } from "@/components/Charts/CategoryPieChart";
 import { analysisApi } from "@/services/api";
-import { Budget, SpendingSummary } from "@/types";
+import { Budget, MonthlyTrend, SpendingSummary } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function DashboardPage() {
@@ -17,6 +15,7 @@ export default function DashboardPage() {
   const { isAuthenticated, isLoading, logout } = useAuth();
   const [spending, setSpending] = useState<SpendingSummary | null>(null);
   const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [monthlyTrends, setMonthlyTrends] = useState<MonthlyTrend[]>([]);
   const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
@@ -27,10 +26,15 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    Promise.all([analysisApi.getSpending(), analysisApi.getBudgets()])
-      .then(([spendingData, budgetData]) => {
+    Promise.all([
+      analysisApi.getSpending(),
+      analysisApi.getBudgets(),
+      analysisApi.getMonthlyTrends(),
+    ])
+      .then(([spendingData, budgetData, trendsData]) => {
         setSpending(spendingData);
         setBudgets(budgetData);
+        setMonthlyTrends(trendsData);
       })
       .finally(() => setIsDataLoading(false));
   }, [isAuthenticated]);
@@ -89,7 +93,7 @@ export default function DashboardPage() {
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <div className="animate-slide-up [animation-delay:200ms]">
-            <SpendingChart data={[]} />
+            <SpendingChart data={monthlyTrends} />
           </div>
           {spending?.by_category && Object.keys(spending.by_category).length > 0 && (
             <div className="animate-slide-up [animation-delay:250ms]">

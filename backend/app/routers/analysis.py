@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.services.auth_service import get_current_user
-from app.services.financial_service import get_spending_summary, get_budget_status
+from app.services.financial_service import get_spending_summary, get_budget_status, get_income_vs_expense
 from app.services.ai_service import generate_financial_analysis
 from app.models.user import User
 
@@ -29,6 +29,16 @@ async def budget_analysis(
 ):
     status = get_budget_status(db, current_user.id)
     return status
+
+
+@router.get("/monthly-trends")
+async def monthly_trends(
+    months: int = Query(default=6, ge=1, le=24),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    trends = get_income_vs_expense(db, current_user.id, months=months)
+    return trends
 
 
 @router.post("/ai-insights")

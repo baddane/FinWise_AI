@@ -1,7 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 import { LayoutDashboard, CreditCard, BarChart3, MessageSquare, Settings, LogOut, Sparkles } from "lucide-react";
 import { clsx } from "clsx";
 
@@ -18,7 +16,8 @@ interface SidebarProps {
 }
 
 export function Sidebar({ onLogout }: SidebarProps) {
-  const pathname = usePathname();
+  const router = useRouter();
+  const pathname = router.pathname;
 
   return (
     <aside className="w-[260px] bg-white border-r border-surface-200/60 flex flex-col h-screen fixed left-0 top-0">

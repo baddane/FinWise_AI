@@ -21,7 +21,7 @@ services:
     build: ./backend
     environment:
       DATABASE_URL: postgresql://finwise:${POSTGRES_PASSWORD:-password}@db:5432/finwise_db
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-changeme-in-production}
       CORS_ORIGINS: '["http://localhost:3000"]'
     ports:
@@ -31,11 +31,14 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   frontend:
-    build: ./frontend
-    environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
+    build:
+      context: ./frontend
+      # NEXT_PUBLIC_API_URL is embedded in the JS bundle at build time, not at runtime
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
     ports:
       - "3000:3000"
     depends_on:

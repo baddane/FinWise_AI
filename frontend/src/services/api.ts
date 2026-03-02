@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AuthTokens, Transaction, Budget, SpendingSummary, ChatMessage } from "@/types";
+import { AuthTokens, Transaction, Budget, SpendingSummary, MonthlyTrend, ChatMessage } from "@/types";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
@@ -61,6 +61,10 @@ export const analysisApi = {
   },
   getBudgets: async (): Promise<Budget[]> => {
     const { data } = await api.get("/api/analysis/budgets");
+    return data;
+  },
+  getMonthlyTrends: async (months = 6): Promise<MonthlyTrend[]> => {
+    const { data } = await api.get("/api/analysis/monthly-trends", { params: { months } });
     return data;
   },
   getAiInsights: async (): Promise<{ insights: string }> => {
