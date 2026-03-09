@@ -15,19 +15,21 @@ logger = logging.getLogger(__name__)
 
 
 async def _init_db():
-    """Initialize DB tables in the background so startup is non-blocking."""
+    """Initialize DB tables in the background so startup is non-blocking.
+    Retries indefinitely with capped backoff until the DB is reachable."""
     if not settings.database_url:
         return
-    for attempt in range(5):
+    attempt = 0
+    while True:
+        attempt += 1
         try:
             Base.metadata.create_all(bind=get_engine())
             logger.info("Database tables created/verified successfully")
             return
         except Exception as e:
-            wait = 2 * (attempt + 1)
-            logger.warning(f"DB connection attempt {attempt + 1}/5 failed: {e}. Retrying in {wait}s...")
+            wait = min(2 * attempt, 30)  # backoff capped at 30s
+            logger.warning(f"DB connection attempt {attempt} failed: {e}. Retrying in {wait}s...")
             await asyncio.sleep(wait)
-    logger.error("Could not connect to database after 5 attempts. Starting without DB.")
 
 
 @asynccontextmanager

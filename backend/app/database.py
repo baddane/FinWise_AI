@@ -17,7 +17,11 @@ def get_engine():
         if not settings.database_url:
             raise RuntimeError("DATABASE_URL environment variable is not set")
         db_url = settings.database_url.replace("postgres://", "postgresql://", 1)
-        _engine = create_engine(db_url, connect_args={"connect_timeout": 10})
+        _engine = create_engine(
+            db_url,
+            connect_args={"connect_timeout": 10},
+            pool_pre_ping=True,
+        )
     return _engine
 
 
