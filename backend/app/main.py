@@ -16,17 +16,17 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if settings.database_url:
-        for attempt in range(10):
+        for attempt in range(5):
             try:
                 Base.metadata.create_all(bind=get_engine())
                 logger.info("Database tables created/verified successfully")
                 break
             except Exception as e:
-                wait = 2 ** attempt
-                logger.warning(f"DB connection attempt {attempt + 1}/10 failed: {e}. Retrying in {wait}s...")
+                wait = 2 * (attempt + 1)  # 2, 4, 6, 8, 10 — max 30s total
+                logger.warning(f"DB connection attempt {attempt + 1}/5 failed: {e}. Retrying in {wait}s...")
                 await asyncio.sleep(wait)
         else:
-            logger.error("Could not connect to database after 10 attempts. Starting without DB.")
+            logger.error("Could not connect to database after 5 attempts. Starting without DB.")
     yield
 
 
