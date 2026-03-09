@@ -25,8 +25,15 @@ export default function LoginPage() {
         await login(email, password);
       }
       router.push("/dashboard");
-    } catch {
-      setError(isRegister ? "Registration failed. Please try again." : "Invalid email or password.");
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { detail?: string }; status?: number } };
+      const detail = axiosErr?.response?.data?.detail;
+      const status = axiosErr?.response?.status;
+      if (isRegister) {
+        setError(detail ?? `Registration failed (${status ?? "network error"}). Please try again.`);
+      } else {
+        setError(detail ?? "Invalid email or password.");
+      }
     } finally {
       setIsLoading(false);
     }
