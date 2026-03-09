@@ -36,9 +36,8 @@ services:
   frontend:
     build:
       context: ./frontend
-      # NEXT_PUBLIC_API_URL is embedded in the JS bundle at build time, not at runtime
-      args:
-        NEXT_PUBLIC_API_URL: http://localhost:8000
+    environment:
+      BACKEND_URL: http://backend:8000
     ports:
       - "3000:3000"
     depends_on:

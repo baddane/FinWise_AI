@@ -2,7 +2,7 @@ import axios from "axios";
 import { AuthTokens, Transaction, Budget, SpendingSummary, MonthlyTrend, ChatMessage } from "@/types";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
+  baseURL: "",
 });
 
 api.interceptors.request.use((config) => {
