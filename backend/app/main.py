@@ -1,3 +1,5 @@
+import asyncio
+import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -8,11 +10,23 @@ from app.database import Base, get_engine
 import app.models  # noqa: F401 – registers all ORM models with Base.metadata
 from app.routers import auth, transactions, analysis, chat
 
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if settings.database_url:
-        Base.metadata.create_all(bind=get_engine())
+        for attempt in range(10):
+            try:
+                Base.metadata.create_all(bind=get_engine())
+                logger.info("Database tables created/verified successfully")
+                break
+            except Exception as e:
+                wait = 2 ** attempt
+                logger.warning(f"DB connection attempt {attempt + 1}/10 failed: {e}. Retrying in {wait}s...")
+                await asyncio.sleep(wait)
+        else:
+            logger.error("Could not connect to database after 10 attempts. Starting without DB.")
     yield
 
 
