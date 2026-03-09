@@ -2,8 +2,9 @@ import asyncio
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.config import settings
 from app.database import Base, get_engine
@@ -50,6 +51,15 @@ app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(transactions.router, prefix="/api/transactions", tags=["transactions"])
 app.include_router(analysis.router, prefix="/api/analysis", tags=["analysis"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled error on {request.method} {request.url}: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": str(exc)},
+    )
 
 
 @app.get("/")
