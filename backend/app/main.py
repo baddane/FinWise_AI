@@ -14,20 +14,26 @@ from app.routers import auth, transactions, analysis, chat
 logger = logging.getLogger(__name__)
 
 
+async def _init_db():
+    """Initialize DB tables in the background so startup is non-blocking."""
+    if not settings.database_url:
+        return
+    for attempt in range(5):
+        try:
+            Base.metadata.create_all(bind=get_engine())
+            logger.info("Database tables created/verified successfully")
+            return
+        except Exception as e:
+            wait = 2 * (attempt + 1)
+            logger.warning(f"DB connection attempt {attempt + 1}/5 failed: {e}. Retrying in {wait}s...")
+            await asyncio.sleep(wait)
+    logger.error("Could not connect to database after 5 attempts. Starting without DB.")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if settings.database_url:
-        for attempt in range(5):
-            try:
-                Base.metadata.create_all(bind=get_engine())
-                logger.info("Database tables created/verified successfully")
-                break
-            except Exception as e:
-                wait = 2 * (attempt + 1)  # 2, 4, 6, 8, 10 — max 30s total
-                logger.warning(f"DB connection attempt {attempt + 1}/5 failed: {e}. Retrying in {wait}s...")
-                await asyncio.sleep(wait)
-        else:
-            logger.error("Could not connect to database after 5 attempts. Starting without DB.")
+    # Run DB init in background — app is ready immediately so healthcheck passes.
+    asyncio.create_task(_init_db())
     yield
 
 
