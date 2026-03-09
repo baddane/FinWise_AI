@@ -1,5 +1,3 @@
-import json
-from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,25 +7,20 @@ class Settings(BaseSettings):
     jwt_secret_key: str = ""
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
-    # Accepts a JSON array string or a comma-separated string
-    cors_origins: list[str] = ["*"]
-
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v):
-        if isinstance(v, list):
-            return v
-        if isinstance(v, str):
-            v = v.strip()
-            if v.startswith("["):
-                return json.loads(v)
-            return [origin.strip() for origin in v.split(",")]
-        return v
+    # Plain string to prevent pydantic-settings from auto-JSON-decoding it.
+    # Accepts: "*", "https://a.com", or "https://a.com,https://b.com"
+    cors_origins: str = "*"
 
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
     )
+
+    def get_cors_origins(self) -> list[str]:
+        v = self.cors_origins.strip()
+        if not v or v == "*":
+            return ["*"]
+        return [o.strip() for o in v.split(",") if o.strip()]
 
 
 settings = Settings()
