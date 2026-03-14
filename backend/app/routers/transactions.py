@@ -34,7 +34,7 @@ class TransactionResponse(BaseModel):
         from_attributes = True
 
 
-@router.get("/", response_model=list[TransactionResponse])
+@router.get("", response_model=list[TransactionResponse])
 async def list_transactions(
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=50, le=200),
@@ -48,7 +48,7 @@ async def list_transactions(
     return query.order_by(Transaction.date.desc()).offset(skip).limit(limit).all()
 
 
-@router.post("/", response_model=TransactionResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=TransactionResponse, status_code=status.HTTP_201_CREATED)
 async def create_transaction(
     transaction_data: TransactionCreate,
     db: Session = Depends(get_db),

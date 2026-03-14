@@ -20,7 +20,7 @@ class ChatResponse(BaseModel):
     conversation_history: list[dict]
 
 
-@router.post("/", response_model=ChatResponse)
+@router.post("", response_model=ChatResponse)
 async def chat(
     chat_data: ChatMessage,
     db: Session = Depends(get_db),
