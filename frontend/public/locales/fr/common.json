@@ -1,0 +1,121 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "transactions": "Transactions",
+    "analysis": "Analyse",
+    "aiAdvisor": "Conseiller IA",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "menu": "Menu",
+    "financialAdvisor": "Conseiller Financier"
+  },
+  "auth": {
+    "createAccount": "Créer votre compte",
+    "welcomeBack": "Bon retour",
+    "startJourney": "Commencez votre parcours vers des finances plus intelligentes",
+    "signInAccess": "Connectez-vous pour accéder à votre tableau de bord financier",
+    "fullName": "Nom complet",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "fullNamePlaceholder": "Jean Dupont",
+    "emailPlaceholder": "vous@exemple.com",
+    "passwordPlaceholder": "Entrez votre mot de passe",
+    "loading": "Veuillez patienter...",
+    "createAccountBtn": "Créer un compte",
+    "signIn": "Se connecter",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "signUp": "S'inscrire",
+    "registrationFailed": "Inscription échouée ({{status}}). Veuillez réessayer.",
+    "invalidCredentials": "E-mail ou mot de passe invalide."
+  },
+  "landing": {
+    "tagline1": "Votre argent,",
+    "tagline2": "géré intelligemment.",
+    "description": "Des analyses propulsées par l'IA pour vous aider à épargner davantage, dépenser judicieusement et atteindre vos objectifs financiers.",
+    "feature1": "Analyse intelligente des dépenses",
+    "feature2": "Suivi personnalisé du budget",
+    "feature3": "Conseils financiers par IA",
+    "poweredBy": "Propulsé par Claude AI"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Votre aperçu financier en un coup d'œil",
+    "totalExpenses": "Total des dépenses",
+    "transactions": "Transactions",
+    "activeBudgets": "Budgets actifs",
+    "overBudget": "Dépassement",
+    "budgetStatus": "État du budget",
+    "trackSpending": "Suivez vos limites de dépenses",
+    "noData": "Aucune donnée",
+    "noDataDescription": "Commencez par ajouter des transactions et des budgets pour voir votre aperçu financier ici."
+  },
+  "transactions": {
+    "title": "Transactions",
+    "subtitle": "Gérez vos revenus et dépenses",
+    "addTransaction": "Ajouter une transaction",
+    "newTransaction": "Nouvelle transaction",
+    "type": "Type",
+    "amount": "Montant ($)",
+    "description": "Description",
+    "merchant": "Marchand",
+    "date": "Date",
+    "expense": "Dépense",
+    "income": "Revenu",
+    "optional": "Optionnel",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "loading": "Chargement des transactions…",
+    "empty": "Aucune transaction. Ajoutez votre première !",
+    "invalidAmount": "Veuillez entrer un montant valide.",
+    "createFailed": "Échec de la création de la transaction. Veuillez réessayer."
+  },
+  "analysis": {
+    "title": "Analyse",
+    "subtitle": "Plongez dans vos données financières",
+    "aiInsights": "Analyses financières IA",
+    "poweredByClaude": "Propulsé par Claude",
+    "generateInsights": "Générer des analyses",
+    "analyzing": "Analyse en cours…",
+    "insightsPlaceholder": "Cliquez sur « Générer des analyses » pour obtenir une analyse IA de vos habitudes de dépenses et des recommandations personnalisées.",
+    "loadingData": "Chargement des données…"
+  },
+  "chat": {
+    "title": "Conseiller IA",
+    "subtitle": "Obtenez des conseils financiers personnalisés",
+    "advisorName": "Conseiller FinWise AI",
+    "poweredByClaude": "Propulsé par Claude",
+    "emptyTitle": "Comment puis-je vous aider avec vos finances ?",
+    "emptyDescription": "Posez-moi des questions sur les budgets, les habitudes de dépenses, les stratégies d'épargne ou obtenez des conseils personnalisés.",
+    "suggestion1": "Comment puis-je économiser davantage ?",
+    "suggestion2": "Analysez mes habitudes de dépenses",
+    "suggestion3": "Aidez-moi à créer un budget",
+    "inputPlaceholder": "Posez une question sur vos finances...",
+    "errorMessage": "Désolé, une erreur s'est produite. Veuillez réessayer."
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez les préférences de votre compte",
+    "account": "Compte",
+    "manageAccount": "Gérez les paramètres de votre compte",
+    "signOut": "Se déconnecter",
+    "language": "Langue",
+    "selectLanguage": "Sélectionnez la langue"
+  },
+  "charts": {
+    "incomeVsExpenses": "Revenus vs Dépenses",
+    "monthlyComparison": "Comparaison mensuelle",
+    "income": "Revenus",
+    "expenses": "Dépenses",
+    "noData": "Aucune donnée",
+    "noDataDescription": "Ajoutez des transactions pour voir vos tendances",
+    "spendingByCategory": "Dépenses par catégorie",
+    "distribution": "Répartition des dépenses",
+    "more": "+{{count}} de plus"
+  },
+  "budget": {
+    "percentUsed": "{{percentage}}% utilisé",
+    "amountOver": "{{amount}}$ dépassé",
+    "amountLeft": "{{amount}}$ restant"
+  }
+}

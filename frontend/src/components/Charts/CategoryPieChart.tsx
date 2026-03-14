@@ -1,6 +1,7 @@
 "use client";
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { useTranslation } from "next-i18next";
 
 const COLORS = [
   "#10b981", "#3b82f6", "#f59e0b", "#ef4444",
@@ -26,6 +27,7 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<
 }
 
 export function CategoryPieChart({ data }: CategoryPieChartProps) {
+  const { t } = useTranslation("common");
   const chartData = Object.entries(data)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
@@ -35,24 +37,15 @@ export function CategoryPieChart({ data }: CategoryPieChartProps) {
   return (
     <div className="card p-6">
       <div className="mb-6">
-        <h3 className="text-sm font-semibold text-surface-900">Spending by Category</h3>
-        <p className="text-xs text-surface-400 mt-0.5">Distribution of expenses</p>
+        <h3 className="text-sm font-semibold text-surface-900">{t("charts.spendingByCategory")}</h3>
+        <p className="text-xs text-surface-400 mt-0.5">{t("charts.distribution")}</p>
       </div>
 
       <div className="flex items-center gap-6">
         <div className="w-[180px] h-[180px] flex-shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                innerRadius={50}
-                outerRadius={80}
-                paddingAngle={3}
-                dataKey="value"
-                strokeWidth={0}
-              >
+              <Pie data={chartData} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="value" strokeWidth={0}>
                 {chartData.map((_, index) => (
                   <Cell key={index} fill={COLORS[index % COLORS.length]} />
                 ))}
@@ -67,17 +60,16 @@ export function CategoryPieChart({ data }: CategoryPieChartProps) {
             const pct = total > 0 ? ((item.value / total) * 100).toFixed(0) : "0";
             return (
               <div key={item.name} className="flex items-center gap-2.5">
-                <div
-                  className="w-2 h-2 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                />
+                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
                 <span className="text-xs text-surface-600 truncate flex-1">{item.name}</span>
                 <span className="text-xs font-semibold text-surface-800 tabular-nums">{pct}%</span>
               </div>
             );
           })}
           {chartData.length > 5 && (
-            <p className="text-[11px] text-surface-400 pl-4">+{chartData.length - 5} more</p>
+            <p className="text-[11px] text-surface-400 pl-4">
+              {t("charts.more", { count: chartData.length - 5 })}
+            </p>
           )}
         </div>
       </div>

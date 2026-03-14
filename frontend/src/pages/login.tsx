@@ -2,9 +2,17 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { useAuth } from "@/hooks/useAuth";
 import { TrendingUp, Shield, Sparkles } from "lucide-react";
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import type { GetStaticProps } from "next";
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { ...(await serverSideTranslations(locale ?? "en", ["common"])) },
+});
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useTranslation("common");
   const { login, register } = useAuth();
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState("");
@@ -30,9 +38,9 @@ export default function LoginPage() {
       const detail = axiosErr?.response?.data?.detail;
       const status = axiosErr?.response?.status;
       if (isRegister) {
-        setError(detail ?? `Registration failed (${status ?? "network error"}). Please try again.`);
+        setError(detail ?? t("auth.registrationFailed", { status: status ?? "network error" }));
       } else {
-        setError(detail ?? "Invalid email or password.");
+        setError(detail ?? t("auth.invalidCredentials"));
       }
     } finally {
       setIsLoading(false);
@@ -43,7 +51,6 @@ export default function LoginPage() {
     <div className="min-h-screen flex">
       {/* Left panel - branding */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-brand-900 via-brand-800 to-brand-950 overflow-hidden">
-        {/* Background decoration */}
         <div className="absolute inset-0">
           <div className="absolute top-1/4 -left-12 w-72 h-72 bg-brand-500/20 rounded-full blur-3xl animate-pulse-soft" />
           <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl animate-pulse-soft [animation-delay:1s]" />
@@ -63,35 +70,33 @@ export default function LoginPage() {
 
           <div className="space-y-8">
             <h2 className="text-4xl font-bold text-white leading-tight">
-              Your money,
+              {t("landing.tagline1")}
               <br />
               <span className="bg-gradient-to-r from-brand-300 to-emerald-300 bg-clip-text text-transparent">
-                intelligently managed.
+                {t("landing.tagline2")}
               </span>
             </h2>
             <p className="text-brand-200/70 text-lg max-w-md leading-relaxed">
-              AI-powered insights to help you save more, spend wisely, and achieve your financial goals.
+              {t("landing.description")}
             </p>
 
             <div className="space-y-4">
               {[
-                { icon: TrendingUp, text: "Smart spending analytics" },
-                { icon: Shield, text: "Personalized budget tracking" },
-                { icon: Sparkles, text: "AI-powered financial advice" },
-              ].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-center gap-3 text-brand-200/80">
+                { icon: TrendingUp, key: "landing.feature1" },
+                { icon: Shield, key: "landing.feature2" },
+                { icon: Sparkles, key: "landing.feature3" },
+              ].map(({ icon: Icon, key }) => (
+                <div key={key} className="flex items-center gap-3 text-brand-200/80">
                   <div className="w-8 h-8 rounded-lg bg-brand-500/15 flex items-center justify-center">
                     <Icon className="w-4 h-4 text-brand-400" />
                   </div>
-                  <span className="text-sm font-medium">{text}</span>
+                  <span className="text-sm font-medium">{t(key)}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <p className="text-brand-400/50 text-xs">
-            Powered by Claude AI
-          </p>
+          <p className="text-brand-400/50 text-xs">{t("landing.poweredBy")}</p>
         </div>
       </div>
 
@@ -108,12 +113,10 @@ export default function LoginPage() {
 
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-surface-900">
-              {isRegister ? "Create your account" : "Welcome back"}
+              {isRegister ? t("auth.createAccount") : t("auth.welcomeBack")}
             </h1>
             <p className="text-surface-500 mt-2 text-sm">
-              {isRegister
-                ? "Start your journey to smarter finances"
-                : "Sign in to access your financial dashboard"}
+              {isRegister ? t("auth.startJourney") : t("auth.signInAccess")}
             </p>
           </div>
 
@@ -121,20 +124,20 @@ export default function LoginPage() {
             {isRegister && (
               <div>
                 <label className="block text-sm font-medium text-surface-700 mb-1.5">
-                  Full Name
+                  {t("auth.fullName")}
                 </label>
                 <input
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className="input"
-                  placeholder="John Doe"
+                  placeholder={t("auth.fullNamePlaceholder")}
                 />
               </div>
             )}
             <div>
               <label className="block text-sm font-medium text-surface-700 mb-1.5">
-                Email
+                {t("auth.email")}
               </label>
               <input
                 type="email"
@@ -142,12 +145,12 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="input"
-                placeholder="you@example.com"
+                placeholder={t("auth.emailPlaceholder")}
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-surface-700 mb-1.5">
-                Password
+                {t("auth.password")}
               </label>
               <input
                 type="password"
@@ -155,7 +158,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="input"
-                placeholder="Enter your password"
+                placeholder={t("auth.passwordPlaceholder")}
               />
             </div>
 
@@ -175,23 +178,20 @@ export default function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  Please wait...
+                  {t("auth.loading")}
                 </span>
-              ) : isRegister ? "Create Account" : "Sign In"}
+              ) : isRegister ? t("auth.createAccountBtn") : t("auth.signIn")}
             </button>
           </form>
 
           <div className="mt-8 text-center">
             <p className="text-sm text-surface-500">
-              {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
+              {isRegister ? t("auth.alreadyHaveAccount") : t("auth.dontHaveAccount")}{" "}
               <button
-                onClick={() => {
-                  setIsRegister(!isRegister);
-                  setError("");
-                }}
+                onClick={() => { setIsRegister(!isRegister); setError(""); }}
                 className="text-brand-600 font-semibold hover:text-brand-700 transition-colors"
               >
-                {isRegister ? "Sign In" : "Sign Up"}
+                {isRegister ? t("auth.signIn") : t("auth.signUp")}
               </button>
             </p>
           </div>

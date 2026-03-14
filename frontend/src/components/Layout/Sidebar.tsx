@@ -2,14 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { LayoutDashboard, CreditCard, BarChart3, MessageSquare, Settings, LogOut, Sparkles } from "lucide-react";
 import { clsx } from "clsx";
-
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/transactions", label: "Transactions", icon: CreditCard },
-  { href: "/analysis", label: "Analysis", icon: BarChart3 },
-  { href: "/chat", label: "AI Advisor", icon: MessageSquare },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
+import { useTranslation } from "next-i18next";
 
 interface SidebarProps {
   onLogout: () => void;
@@ -17,7 +10,21 @@ interface SidebarProps {
 
 export function Sidebar({ onLogout }: SidebarProps) {
   const router = useRouter();
+  const { t, i18n } = useTranslation("common");
   const pathname = router.pathname;
+
+  const navItems = [
+    { href: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
+    { href: "/transactions", label: t("nav.transactions"), icon: CreditCard },
+    { href: "/analysis", label: t("nav.analysis"), icon: BarChart3 },
+    { href: "/chat", label: t("nav.aiAdvisor"), icon: MessageSquare },
+    { href: "/settings", label: t("nav.settings"), icon: Settings },
+  ];
+
+  const toggleLanguage = () => {
+    const newLocale = i18n.language === "en" ? "fr" : "en";
+    router.push(router.pathname, router.asPath, { locale: newLocale });
+  };
 
   return (
     <aside className="w-[260px] bg-white border-r border-surface-200/60 flex flex-col h-screen fixed left-0 top-0">
@@ -29,7 +36,7 @@ export function Sidebar({ onLogout }: SidebarProps) {
           </div>
           <div>
             <h1 className="text-lg font-bold text-surface-900 leading-tight">FinWise AI</h1>
-            <p className="text-[11px] text-surface-400 font-medium">Financial Advisor</p>
+            <p className="text-[11px] text-surface-400 font-medium">{t("nav.financialAdvisor")}</p>
           </div>
         </div>
       </div>
@@ -37,7 +44,7 @@ export function Sidebar({ onLogout }: SidebarProps) {
       {/* Navigation */}
       <nav className="flex-1 px-3 space-y-0.5">
         <p className="px-3 pt-2 pb-2 text-[11px] font-semibold text-surface-400 uppercase tracking-wider">
-          Menu
+          {t("nav.menu")}
         </p>
         {navItems.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href;
@@ -52,30 +59,31 @@ export function Sidebar({ onLogout }: SidebarProps) {
                   : "text-surface-500 hover:bg-surface-50 hover:text-surface-800"
               )}
             >
-              <Icon
-                size={18}
-                className={clsx(
-                  "transition-colors",
-                  isActive ? "text-brand-600" : "text-surface-400"
-                )}
-              />
+              <Icon size={18} className={clsx("transition-colors", isActive ? "text-brand-600" : "text-surface-400")} />
               {label}
-              {isActive && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-brand-500" />
-              )}
+              {isActive && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-brand-500" />}
             </Link>
           );
         })}
       </nav>
 
       {/* Footer */}
-      <div className="p-3 border-t border-surface-100">
+      <div className="p-3 border-t border-surface-100 space-y-1">
+        {/* Language toggle */}
+        <button
+          onClick={toggleLanguage}
+          className="flex items-center gap-3 px-3 py-2 rounded-xl text-[13px] font-medium text-surface-500 hover:bg-surface-50 hover:text-surface-800 w-full transition-all duration-200"
+        >
+          <span className="text-base">{i18n.language === "en" ? "🇫🇷" : "🇬🇧"}</span>
+          <span>{i18n.language === "en" ? "Français" : "English"}</span>
+        </button>
+
         <button
           onClick={onLogout}
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium text-surface-500 hover:bg-red-50 hover:text-red-600 w-full transition-all duration-200 group"
         >
           <LogOut size={18} className="text-surface-400 group-hover:text-red-500 transition-colors" />
-          Logout
+          {t("nav.logout")}
         </button>
       </div>
     </aside>

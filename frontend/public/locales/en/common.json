@@ -1,0 +1,121 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "transactions": "Transactions",
+    "analysis": "Analysis",
+    "aiAdvisor": "AI Advisor",
+    "settings": "Settings",
+    "logout": "Logout",
+    "menu": "Menu",
+    "financialAdvisor": "Financial Advisor"
+  },
+  "auth": {
+    "createAccount": "Create your account",
+    "welcomeBack": "Welcome back",
+    "startJourney": "Start your journey to smarter finances",
+    "signInAccess": "Sign in to access your financial dashboard",
+    "fullName": "Full Name",
+    "email": "Email",
+    "password": "Password",
+    "fullNamePlaceholder": "John Doe",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "Enter your password",
+    "loading": "Please wait...",
+    "createAccountBtn": "Create Account",
+    "signIn": "Sign In",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "signUp": "Sign Up",
+    "registrationFailed": "Registration failed ({{status}}). Please try again.",
+    "invalidCredentials": "Invalid email or password."
+  },
+  "landing": {
+    "tagline1": "Your money,",
+    "tagline2": "intelligently managed.",
+    "description": "AI-powered insights to help you save more, spend wisely, and achieve your financial goals.",
+    "feature1": "Smart spending analytics",
+    "feature2": "Personalized budget tracking",
+    "feature3": "AI-powered financial advice",
+    "poweredBy": "Powered by Claude AI"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Your financial overview at a glance",
+    "totalExpenses": "Total Expenses",
+    "transactions": "Transactions",
+    "activeBudgets": "Active Budgets",
+    "overBudget": "Over Budget",
+    "budgetStatus": "Budget Status",
+    "trackSpending": "Track your spending limits",
+    "noData": "No data yet",
+    "noDataDescription": "Start by adding transactions and budgets to see your financial overview here."
+  },
+  "transactions": {
+    "title": "Transactions",
+    "subtitle": "Manage your income and expenses",
+    "addTransaction": "Add Transaction",
+    "newTransaction": "New Transaction",
+    "type": "Type",
+    "amount": "Amount ($)",
+    "description": "Description",
+    "merchant": "Merchant",
+    "date": "Date",
+    "expense": "Expense",
+    "income": "Income",
+    "optional": "Optional",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading transactions…",
+    "empty": "No transactions yet. Add your first one!",
+    "invalidAmount": "Please enter a valid amount.",
+    "createFailed": "Failed to create transaction. Please try again."
+  },
+  "analysis": {
+    "title": "Analysis",
+    "subtitle": "Deep dive into your financial data",
+    "aiInsights": "AI Financial Insights",
+    "poweredByClaude": "Powered by Claude",
+    "generateInsights": "Generate Insights",
+    "analyzing": "Analyzing…",
+    "insightsPlaceholder": "Click \"Generate Insights\" to get AI-powered analysis of your spending patterns and personalized recommendations.",
+    "loadingData": "Loading data…"
+  },
+  "chat": {
+    "title": "AI Advisor",
+    "subtitle": "Get personalized financial advice",
+    "advisorName": "FinWise AI Advisor",
+    "poweredByClaude": "Powered by Claude",
+    "emptyTitle": "How can I help with your finances?",
+    "emptyDescription": "Ask me about budgets, spending habits, saving strategies, or get personalized advice.",
+    "suggestion1": "How can I save more money?",
+    "suggestion2": "Analyze my spending habits",
+    "suggestion3": "Help me create a budget",
+    "inputPlaceholder": "Ask about your finances...",
+    "errorMessage": "Sorry, I encountered an error. Please try again."
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account preferences",
+    "account": "Account",
+    "manageAccount": "Manage your account settings",
+    "signOut": "Sign Out",
+    "language": "Language",
+    "selectLanguage": "Select language"
+  },
+  "charts": {
+    "incomeVsExpenses": "Income vs Expenses",
+    "monthlyComparison": "Monthly comparison",
+    "income": "Income",
+    "expenses": "Expenses",
+    "noData": "No data yet",
+    "noDataDescription": "Add transactions to see your trends",
+    "spendingByCategory": "Spending by Category",
+    "distribution": "Distribution of expenses",
+    "more": "+{{count}} more"
+  },
+  "budget": {
+    "percentUsed": "{{percentage}}% used",
+    "amountOver": "${{amount}} over",
+    "amountLeft": "${{amount}} left"
+  }
+}

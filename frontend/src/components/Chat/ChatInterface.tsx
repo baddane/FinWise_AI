@@ -5,8 +5,10 @@ import { Send, Bot, User, Sparkles } from "lucide-react";
 import { ChatMessage } from "@/types";
 import { chatApi } from "@/services/api";
 import { clsx } from "clsx";
+import { useTranslation } from "next-i18next";
 
 export function ChatInterface() {
+  const { t } = useTranslation("common");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -29,10 +31,7 @@ export function ChatInterface() {
       const result = await chatApi.sendMessage(input, messages);
       setMessages(result.conversation_history);
     } catch {
-      setMessages([...newMessages, {
-        role: "assistant",
-        content: "Sorry, I encountered an error. Please try again.",
-      }]);
+      setMessages([...newMessages, { role: "assistant", content: t("chat.errorMessage") }]);
     } finally {
       setIsLoading(false);
     }
@@ -46,9 +45,9 @@ export function ChatInterface() {
   };
 
   const suggestions = [
-    "How can I save more money?",
-    "Analyze my spending habits",
-    "Help me create a budget",
+    t("chat.suggestion1"),
+    t("chat.suggestion2"),
+    t("chat.suggestion3"),
   ];
 
   return (
@@ -60,8 +59,8 @@ export function ChatInterface() {
             <Sparkles className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-surface-900">FinWise AI Advisor</h2>
-            <p className="text-[11px] text-surface-400">Powered by Claude</p>
+            <h2 className="text-sm font-semibold text-surface-900">{t("chat.advisorName")}</h2>
+            <p className="text-[11px] text-surface-400">{t("chat.poweredByClaude")}</p>
           </div>
         </div>
       </div>
@@ -73,12 +72,8 @@ export function ChatInterface() {
             <div className="w-16 h-16 rounded-2xl bg-brand-50 flex items-center justify-center mb-4">
               <Bot className="w-8 h-8 text-brand-500" />
             </div>
-            <h3 className="text-lg font-semibold text-surface-800">
-              How can I help with your finances?
-            </h3>
-            <p className="text-sm text-surface-400 mt-1 max-w-sm">
-              Ask me about budgets, spending habits, saving strategies, or get personalized advice.
-            </p>
+            <h3 className="text-lg font-semibold text-surface-800">{t("chat.emptyTitle")}</h3>
+            <p className="text-sm text-surface-400 mt-1 max-w-sm">{t("chat.emptyDescription")}</p>
 
             <div className="flex flex-wrap justify-center gap-2 mt-6">
               {suggestions.map((s) => (
@@ -95,26 +90,13 @@ export function ChatInterface() {
         )}
 
         {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={clsx(
-              "flex gap-3 animate-slide-up",
-              msg.role === "user" ? "justify-end" : "justify-start"
-            )}
-          >
+          <div key={i} className={clsx("flex gap-3 animate-slide-up", msg.role === "user" ? "justify-end" : "justify-start")}>
             {msg.role === "assistant" && (
               <div className="w-7 h-7 rounded-lg bg-brand-50 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <Bot size={14} className="text-brand-600" />
               </div>
             )}
-            <div
-              className={clsx(
-                "max-w-[75%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed",
-                msg.role === "user"
-                  ? "bg-brand-600 text-white rounded-br-md"
-                  : "bg-surface-50 text-surface-800 rounded-bl-md border border-surface-100"
-              )}
-            >
+            <div className={clsx("max-w-[75%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed", msg.role === "user" ? "bg-brand-600 text-white rounded-br-md" : "bg-surface-50 text-surface-800 rounded-bl-md border border-surface-100")}>
               <p className="whitespace-pre-wrap">{msg.content}</p>
             </div>
             {msg.role === "user" && (
@@ -149,20 +131,14 @@ export function ChatInterface() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about your finances..."
+            placeholder={t("chat.inputPlaceholder")}
             rows={1}
-            className="flex-1 resize-none rounded-xl border border-surface-200 bg-white
-                       px-4 py-2.5 text-sm text-surface-800 placeholder:text-surface-400
-                       focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-400
-                       transition-all duration-200"
+            className="flex-1 resize-none rounded-xl border border-surface-200 bg-white px-4 py-2.5 text-sm text-surface-800 placeholder:text-surface-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-400 transition-all duration-200"
           />
           <button
             onClick={sendMessage}
             disabled={!input.trim() || isLoading}
-            className="p-2.5 bg-gradient-to-r from-brand-600 to-brand-500 text-white rounded-xl
-                       hover:from-brand-700 hover:to-brand-600 shadow-sm hover:shadow-md
-                       disabled:opacity-40 disabled:cursor-not-allowed
-                       transition-all duration-200 active:scale-95"
+            className="p-2.5 bg-gradient-to-r from-brand-600 to-brand-500 text-white rounded-xl hover:from-brand-700 hover:to-brand-600 shadow-sm hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 active:scale-95"
           >
             <Send size={16} />
           </button>
