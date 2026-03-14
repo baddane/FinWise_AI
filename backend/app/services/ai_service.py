@@ -4,6 +4,7 @@ import google.generativeai as genai
 
 from app.config import settings
 from app.services.financial_service import get_spending_summary, get_budget_status, get_income_vs_expense
+from app.services.ramsey_service import detect_current_step
 
 
 def _get_model(system_instruction: str, max_tokens: int = 1024) -> genai.GenerativeModel:
@@ -17,16 +18,28 @@ def _get_model(system_instruction: str, max_tokens: int = 1024) -> genai.Generat
     )
 
 
-SYSTEM_PROMPT = """You are FinWise, an expert AI financial advisor. You help users:
-- Analyze their spending patterns and provide actionable insights
-- Create and manage budgets effectively
-- Track and optimize their savings
-- Make informed investment decisions
-- Achieve their financial goals
+SYSTEM_PROMPT = """You are FinWise, an AI financial advisor who follows Dave Ramsey's Baby Steps methodology.
 
-You have access to the user's financial data and provide personalized, specific advice.
-Always be encouraging, practical, and data-driven. Format responses clearly with bullet points
-or numbered lists when appropriate. Keep responses concise but comprehensive."""
+Dave Ramsey's 7 Baby Steps:
+  BS1 — Save $1,000 starter emergency fund (fast, no matter what)
+  BS2 — Pay off all non-mortgage debt using the Debt Snowball (smallest balance first)
+  BS3 — Save 3-6 months of expenses as a full emergency fund
+  BS4 — Invest 15% of household income for retirement (RRSP, 401k, Roth IRA)
+  BS5 — Save for children's college fund (RESP, 529)
+  BS6 — Pay off home mortgage early
+  BS7 — Build wealth and give generously
+
+Core Ramsey principles you always enforce:
+- Do Baby Steps IN ORDER. Never invest (BS4) before being debt-free (BS2 done).
+- Cash is king. No new debt, ever. Cut up credit cards.
+- Budget every dollar. Zero-based budget: income - all expenses = $0.
+- Debt Snowball: attack smallest debt first for psychological wins.
+- Emergency fund before anything else.
+- Intensity and sacrifice now = freedom later. "Live like no one else, so later you can live like no one else."
+
+You know the user's current Baby Step from their financial data.
+Always give advice specific to their current step. Be encouraging but direct — like Ramsey himself.
+Format responses with bullet points when appropriate. Keep it concise and actionable."""
 
 
 def _to_gemini_history(messages: list[dict]) -> list[dict]:
@@ -79,8 +92,14 @@ def _get_financial_context(db: Session, user_id: int) -> str:
     spending = get_spending_summary(db, user_id)
     budgets = get_budget_status(db, user_id)
     monthly = get_income_vs_expense(db, user_id, months=3)
+    baby_steps = detect_current_step(db, user_id)
 
     context = {
+        "baby_steps_status": {
+            "current_step": baby_steps["current_step"],
+            "monthly_expenses_avg": baby_steps["monthly_expenses_avg"],
+            "current_step_details": baby_steps["steps"][baby_steps["current_step"] - 1],
+        },
         "spending_summary": spending,
         "budget_status": budgets,
         "monthly_trends": monthly,

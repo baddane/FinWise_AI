@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AuthTokens, Transaction, Budget, SpendingSummary, MonthlyTrend, ChatMessage } from "@/types";
+import { AuthTokens, Transaction, Budget, SpendingSummary, MonthlyTrend, ChatMessage, Debt, SavingsGoal, BabyStepsStatus } from "@/types";
 
 const api = axios.create({
   baseURL: "",
@@ -70,6 +70,45 @@ export const analysisApi = {
   getAiInsights: async (): Promise<{ insights: string }> => {
     const { data } = await api.post("/api/analysis/ai-insights");
     return data;
+  },
+};
+
+export const ramseyApi = {
+  getStatus: async (): Promise<BabyStepsStatus> => {
+    const { data } = await api.get("/api/ramsey/status");
+    return data;
+  },
+  // Debts
+  listDebts: async (): Promise<Debt[]> => {
+    const { data } = await api.get("/api/ramsey/debts");
+    return data;
+  },
+  createDebt: async (debt: Omit<Debt, "id" | "is_paid_off" | "snowball_order">): Promise<Debt> => {
+    const { data } = await api.post("/api/ramsey/debts", debt);
+    return data;
+  },
+  updateDebt: async (id: number, patch: Partial<Debt>): Promise<Debt> => {
+    const { data } = await api.patch(`/api/ramsey/debts/${id}`, patch);
+    return data;
+  },
+  deleteDebt: async (id: number): Promise<void> => {
+    await api.delete(`/api/ramsey/debts/${id}`);
+  },
+  // Savings Goals
+  listGoals: async (): Promise<SavingsGoal[]> => {
+    const { data } = await api.get("/api/ramsey/goals");
+    return data;
+  },
+  createGoal: async (goal: Omit<SavingsGoal, "id" | "is_completed" | "progress_pct">): Promise<SavingsGoal> => {
+    const { data } = await api.post("/api/ramsey/goals", goal);
+    return data;
+  },
+  updateGoal: async (id: number, patch: Partial<SavingsGoal>): Promise<SavingsGoal> => {
+    const { data } = await api.patch(`/api/ramsey/goals/${id}`, patch);
+    return data;
+  },
+  deleteGoal: async (id: number): Promise<void> => {
+    await api.delete(`/api/ramsey/goals/${id}`);
   },
 };
 

@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { DollarSign, TrendingDown, TrendingUp, Wallet } from "lucide-react";
+import { DollarSign, TrendingDown, TrendingUp, Wallet, ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { Sidebar } from "@/components/Layout/Sidebar";
 import { StatCard } from "@/components/Dashboard/StatCard";
 import { BudgetProgress } from "@/components/Dashboard/BudgetProgress";
 import { SpendingChart } from "@/components/Charts/SpendingChart";
 import { CategoryPieChart } from "@/components/Charts/CategoryPieChart";
-import { analysisApi } from "@/services/api";
-import { Budget, MonthlyTrend, SpendingSummary } from "@/types";
+import { analysisApi, ramseyApi } from "@/services/api";
+import { Budget, MonthlyTrend, SpendingSummary, BabyStepsStatus } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -24,6 +25,7 @@ export default function DashboardPage() {
   const [spending, setSpending] = useState<SpendingSummary | null>(null);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [monthlyTrends, setMonthlyTrends] = useState<MonthlyTrend[]>([]);
+  const [babySteps, setBabySteps] = useState<BabyStepsStatus | null>(null);
   const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
@@ -32,11 +34,17 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    Promise.all([analysisApi.getSpending(), analysisApi.getBudgets(), analysisApi.getMonthlyTrends()])
-      .then(([spendingData, budgetData, trendsData]) => {
+    Promise.all([
+      analysisApi.getSpending(),
+      analysisApi.getBudgets(),
+      analysisApi.getMonthlyTrends(),
+      ramseyApi.getStatus(),
+    ])
+      .then(([spendingData, budgetData, trendsData, stepsData]) => {
         setSpending(spendingData);
         setBudgets(budgetData);
         setMonthlyTrends(trendsData);
+        setBabySteps(stepsData);
       })
       .finally(() => setIsDataLoading(false));
   }, [isAuthenticated]);
@@ -53,6 +61,22 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-surface-900">{t("dashboard.title")}</h1>
           <p className="text-sm text-surface-400 mt-1">{t("dashboard.subtitle")}</p>
         </div>
+
+        {/* Baby Step banner */}
+        {babySteps && (
+          <Link href="/babysteps" className="block mb-6 animate-fade-in">
+            <div className="rounded-2xl bg-gradient-to-r from-brand-600 to-brand-500 px-6 py-4 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+              <div>
+                <p className="text-brand-200 text-[11px] font-semibold uppercase tracking-wider">{t("ramsey.currentStep")}</p>
+                <p className="text-white text-base font-bold mt-0.5">
+                  {t("ramsey.step")} {babySteps.current_step} — {t(`ramsey.step${babySteps.current_step}Title`)}
+                </p>
+                <p className="text-brand-200 text-xs mt-0.5">{t(`ramsey.step${babySteps.current_step}Desc`)}</p>
+              </div>
+              <ChevronRight className="text-brand-200 flex-shrink-0" size={20} />
+            </div>
+          </Link>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="animate-slide-up [animation-delay:0ms]">

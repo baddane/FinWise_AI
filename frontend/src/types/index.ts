@@ -52,3 +52,49 @@ export interface AuthTokens {
   access_token: string;
   token_type: string;
 }
+
+export interface Debt {
+  id: number;
+  name: string;
+  balance: number;
+  original_balance: number | null;
+  minimum_payment: number | null;
+  interest_rate: number | null;
+  debt_type: string;
+  is_paid_off: boolean;
+  snowball_order: number | null;
+}
+
+export interface SavingsGoal {
+  id: number;
+  name: string;
+  step_type: string;
+  target_amount: number;
+  current_amount: number;
+  is_completed: boolean;
+  progress_pct: number;
+}
+
+export interface BabyStepDetail {
+  step: number;
+  title: string;
+  description: string;
+  is_complete: boolean;
+  // BS1
+  target?: number;
+  current?: number;
+  progress_pct?: number;
+  // BS2
+  total_debt?: number;
+  debts_remaining?: number;
+  snowball_target?: { id: number; name: string; balance: number } | null;
+  // BS3
+  target_3months?: number;
+  target_6months?: number;
+}
+
+export interface BabyStepsStatus {
+  current_step: number;
+  monthly_expenses_avg: number;
+  steps: BabyStepDetail[];
+}
