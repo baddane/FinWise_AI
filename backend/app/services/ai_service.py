@@ -88,6 +88,70 @@ Financial Data:
     return response.text
 
 
+async def generate_profile_advice(profile) -> str:
+    """Generate personalized financial management advice based on user's financial profile."""
+    total_charges = sum(filter(None, [
+        profile.housing_amount,
+        profile.food_budget,
+        profile.transport_budget,
+        profile.utilities_budget,
+        profile.other_charges,
+    ]))
+    disposable = profile.salary - total_charges
+    savings_rate = (disposable / profile.salary * 100) if profile.salary > 0 else 0
+
+    profile_summary = f"""
+User Financial Profile:
+- Monthly Net Salary: {profile.salary} {profile.currency}
+- Employment Type: {profile.employment_type or "Not specified"}
+- Location: {profile.city or "?"}, {profile.country or "?"}
+- Number of Children: {profile.num_children}
+- Housing: {profile.housing_type or "not specified"} — {profile.housing_amount} {profile.currency}/month
+- Food Budget: {profile.food_budget or 0} {profile.currency}/month
+- Transport Budget: {profile.transport_budget or 0} {profile.currency}/month
+- Utilities (electricity, internet, etc.): {profile.utilities_budget or 0} {profile.currency}/month
+- Other Charges: {profile.other_charges or 0} {profile.currency}/month
+- Total Monthly Charges: {total_charges:.2f} {profile.currency}
+- Estimated Disposable Income: {disposable:.2f} {profile.currency}
+- Current Savings Rate: {savings_rate:.1f}%
+"""
+
+    system = """You are FinWise, an expert personal finance advisor with deep knowledge of budgeting, savings strategies, and financial planning adapted to different countries, currencies, and family situations.
+
+Your role is to analyze a user's complete financial situation and provide:
+1. A clear monthly budget breakdown with percentages
+2. An honest assessment of their financial health
+3. Concrete, actionable recommendations tailored to their specific situation (country, family size, income level)
+4. Priority actions to improve their finances immediately
+5. Mid and long-term financial goals to aim for
+
+Always adapt your advice to the user's local context (country-specific tax benefits, savings accounts, investment vehicles).
+Be direct, practical and encouraging. Use bullet points and clear sections. Respond in the same language the user's country implies OR default to English."""
+
+    model = _get_model(system, max_tokens=2048)
+    prompt = f"""{profile_summary}
+
+Based on this financial profile, please provide:
+
+## 1. Budget Analysis
+Break down how the income is currently allocated (%) and compare to the recommended 50/30/20 rule or equivalent.
+
+## 2. Financial Health Assessment
+Give an honest score (1-10) with explanation.
+
+## 3. Top 5 Personalized Recommendations
+Specific, actionable advice adapted to their country, family size, and income level.
+
+## 4. Priority Action Plan
+What to do THIS MONTH to improve their finances.
+
+## 5. Savings & Investment Targets
+Realistic monthly savings goals and where to put them (adapted to their country)."""
+
+    response = model.generate_content(prompt)
+    return response.text
+
+
 def _get_financial_context(db: Session, user_id: int) -> str:
     spending = get_spending_summary(db, user_id)
     budgets = get_budget_status(db, user_id)

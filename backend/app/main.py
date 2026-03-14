@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from app.config import settings
 from app.database import Base, get_engine
 import app.models  # noqa: F401 – registers all ORM models with Base.metadata
-from app.routers import auth, transactions, analysis, chat, ramsey
+from app.routers import auth, transactions, analysis, chat, ramsey, profile
 
 logger = logging.getLogger(__name__)
 
@@ -61,6 +61,7 @@ app.include_router(transactions.router, prefix="/api/transactions", tags=["trans
 app.include_router(analysis.router, prefix="/api/analysis", tags=["analysis"])
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(ramsey.router, prefix="/api/ramsey", tags=["ramsey"])
+app.include_router(profile.router, prefix="/api/profile", tags=["profile"])
 
 
 @app.exception_handler(Exception)

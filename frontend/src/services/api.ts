@@ -112,6 +112,21 @@ export const ramseyApi = {
   },
 };
 
+export const profileApi = {
+  get: async () => {
+    const { data } = await api.get("/api/profile");
+    return data;
+  },
+  upsert: async (profile: Record<string, unknown>) => {
+    const { data } = await api.put("/api/profile", profile);
+    return data;
+  },
+  getAdvice: async (): Promise<{ advice: string }> => {
+    const { data } = await api.post("/api/profile/advice");
+    return data;
+  },
+};
+
 export const chatApi = {
   sendMessage: async (
     message: string,

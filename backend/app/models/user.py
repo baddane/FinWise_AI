@@ -20,3 +20,4 @@ class User(Base):
     budgets = relationship("Budget", back_populates="user")
     debts = relationship("Debt", back_populates="user")
     savings_goals = relationship("SavingsGoal", back_populates="user")
+    financial_profile = relationship("FinancialProfile", back_populates="user", uselist=False)
