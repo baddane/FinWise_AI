@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Sparkles } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Sidebar } from "@/components/Layout/Sidebar";
 import { SpendingChart } from "@/components/Charts/SpendingChart";
 import { CategoryPieChart } from "@/components/Charts/CategoryPieChart";
@@ -44,7 +46,8 @@ export default function AnalysisPage() {
   const generateInsights = async () => {
     setIsInsightsLoading(true);
     try {
-      const result = await analysisApi.getAiInsights();
+      const lang = router.locale ?? "en";
+      const result = await analysisApi.getAiInsights(lang);
       setInsights(result.insights);
     } finally {
       setIsInsightsLoading(false);
@@ -85,8 +88,12 @@ export default function AnalysisPage() {
                 </button>
               </div>
               {insights ? (
-                <div className="prose prose-sm max-w-none text-surface-700 whitespace-pre-wrap text-sm leading-relaxed">
-                  {insights}
+                <div className="prose prose-sm max-w-none text-surface-700
+                  prose-headings:text-surface-900 prose-headings:font-semibold
+                  [&_table]:border-collapse [&_table]:w-full [&_table]:text-sm
+                  [&_th]:bg-surface-50 [&_th]:px-3 [&_th]:py-2 [&_th]:border [&_th]:border-surface-200 [&_th]:text-left
+                  [&_td]:px-3 [&_td]:py-2 [&_td]:border [&_td]:border-surface-200">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{insights}</ReactMarkdown>
                 </div>
               ) : (
                 <p className="text-surface-400 text-sm">{t("analysis.insightsPlaceholder")}</p>

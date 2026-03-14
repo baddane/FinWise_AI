@@ -4,10 +4,17 @@ import { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useForm } from "react-hook-form";
-import { Sparkles, User, MapPin, Home, Users, Wallet, Loader2, ChevronDown } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Sparkles, User, MapPin, Home, Users, Wallet, Loader2, ChevronDown, Plus, Trash2 } from "lucide-react";
 import { Sidebar } from "@/components/Layout/Sidebar";
 import { profileApi } from "@/services/api";
 import { useAuth } from "@/hooks/useAuth";
+
+interface CustomCharge {
+  name: string;
+  amount: number;
+}
 
 interface ProfileForm {
   salary: number;
@@ -37,6 +44,7 @@ export default function FinancialProfilePage() {
   const [advice, setAdvice] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [customCharges, setCustomCharges] = useState<CustomCharge[]>([]);
 
   const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<ProfileForm>({
     defaultValues: {
@@ -53,12 +61,17 @@ export default function FinancialProfilePage() {
   const transport = watch("transport_budget") || 0;
   const utilities = watch("utilities_budget") || 0;
   const other = watch("other_charges") || 0;
-  const totalCharges = Number(housingAmt) + Number(food) + Number(transport) + Number(utilities) + Number(other);
+  const customTotal = customCharges.reduce((s, c) => s + (Number(c.amount) || 0), 0);
+  const totalCharges = Number(housingAmt) + Number(food) + Number(transport) + Number(utilities) + Number(other) + customTotal;
   const disposable = Number(salary) - totalCharges;
 
   useEffect(() => {
     profileApi.get().then((data) => {
-      if (data) reset(data as ProfileForm);
+      if (data) {
+        const { custom_charges, ...rest } = data as ProfileForm & { custom_charges?: CustomCharge[] };
+        reset(rest as ProfileForm);
+        if (custom_charges) setCustomCharges(custom_charges);
+      }
     }).catch(() => {});
   }, [reset]);
 
@@ -66,7 +79,7 @@ export default function FinancialProfilePage() {
     setSaving(true);
     setError(null);
     try {
-      await profileApi.upsert(values);
+      await profileApi.upsert({ ...values, custom_charges: customCharges });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch {
@@ -81,13 +94,26 @@ export default function FinancialProfilePage() {
     setError(null);
     setAdvice(null);
     try {
-      const { advice: text } = await profileApi.getAdvice();
+      const lang = router.locale ?? "en";
+      const { advice: text } = await profileApi.getAdvice(lang);
       setAdvice(text);
     } catch {
       setError(t("profile.adviceError"));
     } finally {
       setLoadingAdvice(false);
     }
+  };
+
+  const addCustomCharge = () => {
+    setCustomCharges([...customCharges, { name: "", amount: 0 }]);
+  };
+
+  const updateCustomCharge = (idx: number, field: keyof CustomCharge, value: string | number) => {
+    setCustomCharges(customCharges.map((c, i) => i === idx ? { ...c, [field]: value } : c));
+  };
+
+  const removeCustomCharge = (idx: number) => {
+    setCustomCharges(customCharges.filter((_, i) => i !== idx));
   };
 
   return (
@@ -295,6 +321,53 @@ export default function FinancialProfilePage() {
                   />
                 </div>
               </div>
+
+              {/* Custom Charges */}
+              <div className="mt-2 space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-surface-700">{t("profile.customCharges")}</p>
+                  <button
+                    type="button"
+                    onClick={addCustomCharge}
+                    className="flex items-center gap-1 text-xs text-brand-600 hover:text-brand-800 font-medium"
+                  >
+                    <Plus size={14} />
+                    {t("profile.addCharge")}
+                  </button>
+                </div>
+                {customCharges.map((charge, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={charge.name}
+                      onChange={(e) => updateCustomCharge(idx, "name", e.target.value)}
+                      placeholder={t("profile.chargeName")}
+                      className="flex-1 border border-surface-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
+                    />
+                    <input
+                      type="number"
+                      step="0.01"
+                      min={0}
+                      value={charge.amount || ""}
+                      onChange={(e) => updateCustomCharge(idx, "amount", parseFloat(e.target.value) || 0)}
+                      placeholder="0"
+                      className="w-28 border border-surface-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeCustomCharge(idx)}
+                      className="text-red-400 hover:text-red-600 p-1"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                ))}
+                {customCharges.length > 0 && (
+                  <p className="text-xs text-surface-400 text-right">
+                    {t("profile.customTotal")} : <span className="font-semibold text-surface-600">{customTotal.toLocaleString()}</span>
+                  </p>
+                )}
+              </div>
             </section>
 
             {/* Actions */}
@@ -341,7 +414,13 @@ export default function FinancialProfilePage() {
                   <p className="text-xs text-surface-400">{t("profile.poweredByGemini")}</p>
                 </div>
               </div>
-              <p className="text-sm text-surface-700 whitespace-pre-wrap leading-relaxed">{advice}</p>
+              <div className="prose prose-sm max-w-none text-surface-700
+                prose-headings:text-surface-900 prose-headings:font-semibold
+                [&_table]:border-collapse [&_table]:w-full [&_table]:text-sm
+                [&_th]:bg-surface-50 [&_th]:px-3 [&_th]:py-2 [&_th]:border [&_th]:border-surface-200 [&_th]:text-left
+                [&_td]:px-3 [&_td]:py-2 [&_td]:border [&_td]:border-surface-200">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{advice}</ReactMarkdown>
+              </div>
             </div>
           )}
         </div>

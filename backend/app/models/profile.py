@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -32,6 +32,8 @@ class FinancialProfile(Base):
     transport_budget = Column(Float, nullable=True)
     utilities_budget = Column(Float, nullable=True)
     other_charges = Column(Float, nullable=True)
+    # Custom charges: [{"name": "Netflix", "amount": 15.99}, ...]
+    custom_charges = Column(JSON, nullable=True, default=list)
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

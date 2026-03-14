@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -9,6 +9,11 @@ from app.services.auth_service import get_current_user
 from app.services.ai_service import generate_profile_advice
 
 router = APIRouter()
+
+
+class CustomCharge(BaseModel):
+    name: str
+    amount: float
 
 
 class FinancialProfileIn(BaseModel):
@@ -24,6 +29,7 @@ class FinancialProfileIn(BaseModel):
     transport_budget: float | None = None
     utilities_budget: float | None = None
     other_charges: float | None = None
+    custom_charges: list[CustomCharge] = []
 
 
 class FinancialProfileOut(FinancialProfileIn):
@@ -48,12 +54,16 @@ async def upsert_profile(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    data = profile_data.model_dump()
+    # Store custom_charges as list of dicts (JSON-serializable)
+    data["custom_charges"] = [c.model_dump() for c in profile_data.custom_charges]
+
     profile = db.query(FinancialProfile).filter(FinancialProfile.user_id == current_user.id).first()
     if profile:
-        for field, value in profile_data.model_dump().items():
+        for field, value in data.items():
             setattr(profile, field, value)
     else:
-        profile = FinancialProfile(user_id=current_user.id, **profile_data.model_dump())
+        profile = FinancialProfile(user_id=current_user.id, **data)
         db.add(profile)
     db.commit()
     db.refresh(profile)
@@ -62,6 +72,7 @@ async def upsert_profile(
 
 @router.post("/advice")
 async def get_advice(
+    lang: str = Query(default="en"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -71,5 +82,5 @@ async def get_advice(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Financial profile not found. Please fill in your profile first.",
         )
-    advice = await generate_profile_advice(profile)
+    advice = await generate_profile_advice(profile, lang=lang)
     return {"advice": advice}

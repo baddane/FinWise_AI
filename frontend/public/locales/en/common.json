@@ -165,7 +165,11 @@
     "emp_business_owner": "Business Owner",
     "emp_retired": "Retired",
     "emp_student": "Student",
-    "emp_other": "Other"
+    "emp_other": "Other",
+    "customCharges": "Additional charges",
+    "addCharge": "Add a charge",
+    "chargeName": "Charge name (e.g. Netflix)",
+    "customTotal": "Custom charges subtotal"
   },
   "ramsey": {
     "title": "Baby Steps",

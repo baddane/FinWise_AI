@@ -43,8 +43,9 @@ async def monthly_trends(
 
 @router.post("/ai-insights")
 async def ai_insights(
+    lang: str = Query(default="en"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    analysis = await generate_financial_analysis(db, current_user.id)
+    analysis = await generate_financial_analysis(db, current_user.id, lang=lang)
     return {"insights": analysis}

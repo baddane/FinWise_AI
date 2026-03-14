@@ -67,8 +67,8 @@ export const analysisApi = {
     const { data } = await api.get("/api/analysis/monthly-trends", { params: { months } });
     return data;
   },
-  getAiInsights: async (): Promise<{ insights: string }> => {
-    const { data } = await api.post("/api/analysis/ai-insights");
+  getAiInsights: async (lang = "en"): Promise<{ insights: string }> => {
+    const { data } = await api.post("/api/analysis/ai-insights", null, { params: { lang } });
     return data;
   },
 };
@@ -121,8 +121,8 @@ export const profileApi = {
     const { data } = await api.put("/api/profile", profile);
     return data;
   },
-  getAdvice: async (): Promise<{ advice: string }> => {
-    const { data } = await api.post("/api/profile/advice");
+  getAdvice: async (lang = "en"): Promise<{ advice: string }> => {
+    const { data } = await api.post("/api/profile/advice", null, { params: { lang } });
     return data;
   },
 };
