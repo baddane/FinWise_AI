@@ -44,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const response = await fetch(url, {
     method: req.method,
     headers: forwardHeaders,
-    body,
+    body: body ? (body as unknown as BodyInit) : undefined,
   });
 
   res.status(response.status);
