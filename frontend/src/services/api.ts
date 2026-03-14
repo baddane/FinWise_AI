@@ -40,35 +40,35 @@ export const authApi = {
 
 export const transactionsApi = {
   list: async (params?: { skip?: number; limit?: number; type?: string }): Promise<Transaction[]> => {
-    const { data } = await api.get("/api/transactions", { params });
+    const { data } = await api.get("/api/transactions/", { params });
     return data;
   },
   create: async (transaction: Omit<Transaction, "id" | "created_at">): Promise<Transaction> => {
-    const { data } = await api.post("/api/transactions", transaction);
+    const { data } = await api.post("/api/transactions/", transaction);
     return data;
   },
   delete: async (id: number): Promise<void> => {
-    await api.delete(`/api/transactions/${id}`);
+    await api.delete(`/api/transactions/${id}/`);
   },
 };
 
 export const analysisApi = {
   getSpending: async (start_date?: string, end_date?: string): Promise<SpendingSummary> => {
-    const { data } = await api.get("/api/analysis/spending", {
+    const { data } = await api.get("/api/analysis/spending/", {
       params: { start_date, end_date },
     });
     return data;
   },
   getBudgets: async (): Promise<Budget[]> => {
-    const { data } = await api.get("/api/analysis/budgets");
+    const { data } = await api.get("/api/analysis/budgets/");
     return data;
   },
   getMonthlyTrends: async (months = 6): Promise<MonthlyTrend[]> => {
-    const { data } = await api.get("/api/analysis/monthly-trends", { params: { months } });
+    const { data } = await api.get("/api/analysis/monthly-trends/", { params: { months } });
     return data;
   },
   getAiInsights: async (): Promise<{ insights: string }> => {
-    const { data } = await api.post("/api/analysis/ai-insights");
+    const { data } = await api.post("/api/analysis/ai-insights/");
     return data;
   },
 };
@@ -78,7 +78,7 @@ export const chatApi = {
     message: string,
     conversation_history: ChatMessage[]
   ): Promise<{ response: string; conversation_history: ChatMessage[] }> => {
-    const { data } = await api.post("/api/chat", { message, conversation_history });
+    const { data } = await api.post("/api/chat/", { message, conversation_history });
     return data;
   },
 };
