@@ -19,7 +19,13 @@ export function useAuth() {
 
   const register = async (email: string, password: string, full_name?: string) => {
     await authApi.register(email, password, full_name);
-    await login(email, password);
+    // Don't auto-login — user must verify email first
+  };
+
+  const googleLogin = async (id_token: string) => {
+    const tokens = await authApi.googleLogin(id_token);
+    localStorage.setItem("access_token", tokens.access_token);
+    setIsAuthenticated(true);
   };
 
   const logout = () => {
@@ -27,5 +33,5 @@ export function useAuth() {
     setIsAuthenticated(false);
   };
 
-  return { isAuthenticated, isLoading, login, register, logout };
+  return { isAuthenticated, isLoading, login, register, googleLogin, logout };
 }

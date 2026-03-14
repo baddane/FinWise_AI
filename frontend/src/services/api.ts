@@ -36,6 +36,18 @@ export const authApi = {
     });
     return data;
   },
+  googleLogin: async (id_token: string): Promise<AuthTokens> => {
+    const { data } = await api.post("/api/auth/google", { id_token });
+    return data;
+  },
+  verifyEmail: async (token: string) => {
+    const { data } = await api.get("/api/auth/verify-email", { params: { token } });
+    return data;
+  },
+  resendVerification: async (email: string) => {
+    const { data } = await api.post("/api/auth/resend-verification", { email });
+    return data;
+  },
 };
 
 export const transactionsApi = {

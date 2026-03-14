@@ -11,6 +11,19 @@ class Settings(BaseSettings):
     # Accepts: "*", "https://a.com", or "https://a.com,https://b.com"
     cors_origins: str = "*"
 
+    # Google OAuth — set in Railway/env
+    google_client_id: str = ""
+
+    # SMTP email (works with Gmail App Password, Resend SMTP, Mailgun, etc.)
+    smtp_host: str = "smtp.gmail.com"
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_from: str = ""       # e.g. "FinWise AI <no-reply@yourapp.com>"
+
+    # Frontend URL (for email verification link)
+    frontend_url: str = "http://localhost:3000"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
