@@ -117,7 +117,7 @@ export const profileApi = {
     const { data } = await api.get("/api/profile");
     return data;
   },
-  upsert: async (profile: Record<string, unknown>) => {
+  upsert: async (profile: object) => {
     const { data } = await api.put("/api/profile", profile);
     return data;
   },
