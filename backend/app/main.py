@@ -44,6 +44,7 @@ app = FastAPI(
     description="AI-powered personal finance assistant API",
     version="1.0.0",
     lifespan=lifespan,
+    redirect_slashes=False,
 )
 
 origins = settings.get_cors_origins()
