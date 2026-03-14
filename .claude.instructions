@@ -1,0 +1,166 @@
+# Instructions techniques — Multilingue (FR/EN) avec Next.js + next-i18next
+
+## Stack validée
+- Next.js 14 (Pages Router)
+- next-i18next + react-i18next + i18next
+
+## Installation
+```bash
+npm install next-i18next react-i18next i18next
+```
+
+---
+
+## Structure des fichiers
+
+```
+frontend/
+├── next.config.js               ← i18n inliné ici (IMPORTANT)
+├── next-i18next.config.js       ← config pour serverSideTranslations
+├── public/
+│   └── locales/
+│       ├── en/
+│       │   └── common.json
+│       └── fr/
+│           └── common.json
+└── src/
+    └── pages/
+        └── _app.tsx             ← appWithTranslation
+```
+
+---
+
+## next.config.js — i18n DOIT être inliné (ne pas require un fichier externe)
+
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "fr"],
+  },
+};
+module.exports = nextConfig;
+```
+
+> PIÈGE : Ne jamais faire `const { i18n } = require("./next-i18next.config")` dans next.config.js.
+> Le container résout les chemins depuis `/app` et plante avec MODULE_NOT_FOUND.
+
+---
+
+## next-i18next.config.js — utilisé par serverSideTranslations uniquement
+
+```js
+/** @type {import('next-i18next').UserConfig} */
+module.exports = {
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "fr"],
+  },
+  defaultNS: "common",
+};
+```
+
+---
+
+## _app.tsx
+
+```tsx
+import type { AppProps } from "next/app";
+import { appWithTranslation } from "next-i18next";
+import "../styles/globals.css";
+
+function App({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />;
+}
+
+export default appWithTranslation(App);
+```
+
+---
+
+## Chaque page doit exporter getStaticProps (ou getServerSideProps)
+
+```tsx
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import type { GetStaticProps } from "next";
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => ({
+  props: { ...(await serverSideTranslations(locale ?? "en", ["common"])) },
+});
+```
+
+---
+
+## Hook dans les pages et composants
+
+```tsx
+import { useTranslation } from "next-i18next";
+
+export default function MyPage() {
+  const { t } = useTranslation("common");
+  return <h1>{t("dashboard.title")}</h1>;
+}
+```
+
+---
+
+## Changement de langue (router)
+
+```tsx
+const { i18n } = useTranslation("common");
+
+const changeLanguage = (locale: string) => {
+  router.push(router.pathname, router.asPath, { locale });
+};
+```
+
+---
+
+## Structure recommandée de common.json
+
+```json
+{
+  "nav": { "dashboard": "...", "logout": "..." },
+  "auth": { "signIn": "...", "email": "..." },
+  "dashboard": { "title": "...", "subtitle": "..." },
+  "transactions": { "title": "...", "addTransaction": "..." },
+  "analysis": { "title": "...", "generateInsights": "..." },
+  "chat": { "title": "...", "inputPlaceholder": "..." },
+  "settings": { "title": "...", "language": "..." },
+  "charts": { "income": "...", "expenses": "..." },
+  "budget": { "percentUsed": "{{percentage}}% used" }
+}
+```
+
+> Les interpolations se font avec `{{variable}}` :
+> `t("auth.registrationFailed", { status: 404 })`
+
+---
+
+## Bouton toggle dans la sidebar
+
+```tsx
+const toggleLanguage = () => {
+  const newLocale = i18n.language === "en" ? "fr" : "en";
+  router.push(router.pathname, router.asPath, { locale: newLocale });
+};
+
+<button onClick={toggleLanguage}>
+  {i18n.language === "en" ? "🇫🇷 Français" : "🇬🇧 English"}
+</button>
+```
+
+---
+
+## Checklist pour un nouveau projet
+
+- [ ] `npm install next-i18next react-i18next i18next`
+- [ ] `next.config.js` : i18n inline (pas de require externe)
+- [ ] `next-i18next.config.js` : config séparée pour serverSideTranslations
+- [ ] `public/locales/en/common.json` et `fr/common.json`
+- [ ] `_app.tsx` : `appWithTranslation(App)`
+- [ ] Chaque page : `getStaticProps` avec `serverSideTranslations`
+- [ ] Composants : `useTranslation("common")`
+- [ ] Toggle langue dans Sidebar ou Settings via `router.push(..., { locale })`
