@@ -86,8 +86,12 @@ export default function FinancialProfilePage() {
       await profileApi.upsert({ ...cleaned, custom_charges: customCharges });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-    } catch {
-      setError(t("profile.saveFailed"));
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { status: number; data?: { detail?: string } } };
+      const detail = axiosErr?.response?.data?.detail;
+      const status = axiosErr?.response?.status;
+      console.error("[profile save] status:", status, "detail:", detail, err);
+      setError(detail ? `(${status}) ${JSON.stringify(detail)}` : t("profile.saveFailed"));
     } finally {
       setSaving(false);
     }
