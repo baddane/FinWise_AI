@@ -80,4 +80,22 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy"}
+    db_configured = bool(settings.database_url)
+    db_connected = False
+    db_error = None
+    if db_configured:
+        try:
+            engine = get_engine()
+            with engine.connect() as conn:
+                conn.execute(__import__("sqlalchemy").text("SELECT 1"))
+            db_connected = True
+        except Exception as e:
+            db_error = str(e)
+    return {
+        "status": "healthy" if db_connected else "degraded",
+        "database_url_set": db_configured,
+        "database_connected": db_connected,
+        "database_error": db_error,
+        "jwt_secret_set": bool(settings.jwt_secret_key),
+        "gemini_key_set": bool(settings.gemini_api_key),
+    }
