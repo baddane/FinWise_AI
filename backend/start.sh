@@ -34,7 +34,7 @@ with engine.connect() as conn:
             "CREATE TABLE alembic_version "
             "(version_num VARCHAR(32) NOT NULL CONSTRAINT alembic_version_pkc PRIMARY KEY)"
         ))
-        conn.execute(text("INSERT INTO alembic_version VALUES ('b2c3d4e5f6a7')"))
+        conn.execute(text("INSERT INTO alembic_version VALUES ('c3d4e5f6a7b8')"))
         conn.commit()
         print("Stamped.")
 PYEOF
