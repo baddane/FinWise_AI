@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/router";
 import { Send, Bot, User, Sparkles } from "lucide-react";
 import { ChatMessage } from "@/types";
 import { chatApi } from "@/services/api";
@@ -9,6 +10,7 @@ import { useTranslation } from "next-i18next";
 
 export function ChatInterface() {
   const { t } = useTranslation("common");
+  const router = useRouter();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +30,8 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
-      const result = await chatApi.sendMessage(input, messages);
+      const lang = router.locale ?? "en";
+      const result = await chatApi.sendMessage(input, messages, lang);
       setMessages(result.conversation_history);
     } catch {
       setMessages([...newMessages, { role: "assistant", content: t("chat.errorMessage") }]);
@@ -60,7 +63,7 @@ export function ChatInterface() {
           </div>
           <div>
             <h2 className="text-sm font-semibold text-surface-900">{t("chat.advisorName")}</h2>
-            <p className="text-[11px] text-surface-400">{t("chat.poweredByClaude")}</p>
+            <p className="text-[11px] text-surface-400">{t("chat.poweredByGemini")}</p>
           </div>
         </div>
       </div>

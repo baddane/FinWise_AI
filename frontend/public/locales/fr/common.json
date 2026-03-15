@@ -72,7 +72,9 @@
     "month": "mois",
     "children": "enfant(s)",
     "monthlySavings": "Épargne mensuelle",
-    "housingCost": "Logement"
+    "housingCost": "Logement",
+    "completeProfile": "Complétez votre profil financier",
+    "completeProfileDesc": "Ajoutez vos revenus et charges pour que l'IA personnalise tous vos conseils"
   },
   "transactions": {
     "title": "Transactions",
@@ -98,7 +100,8 @@
     "title": "Analyse",
     "subtitle": "Plongez dans vos données financières",
     "aiInsights": "Analyses financières IA",
-    "poweredByClaude": "Propulsé par Claude",
+    "poweredByClaude": "Propulsé par Gemini AI",
+    "poweredByGemini": "Propulsé par Gemini AI",
     "generateInsights": "Générer des analyses",
     "analyzing": "Analyse en cours…",
     "insightsPlaceholder": "Cliquez sur « Générer des analyses » pour obtenir une analyse IA de vos habitudes de dépenses et des recommandations personnalisées.",
@@ -108,7 +111,8 @@
     "title": "Conseiller IA",
     "subtitle": "Obtenez des conseils financiers personnalisés",
     "advisorName": "Conseiller FinWise AI",
-    "poweredByClaude": "Propulsé par Claude",
+    "poweredByClaude": "Propulsé par Gemini AI",
+    "poweredByGemini": "Propulsé par Gemini AI",
     "emptyTitle": "Comment puis-je vous aider avec vos finances ?",
     "emptyDescription": "Posez-moi des questions sur les budgets, les habitudes de dépenses, les stratégies d'épargne ou obtenez des conseils personnalisés.",
     "suggestion1": "Comment puis-je économiser davantage ?",

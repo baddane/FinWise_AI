@@ -80,7 +80,7 @@ export default function AnalysisPage() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="text-sm font-semibold text-surface-900">{t("analysis.aiInsights")}</h3>
-                  <p className="text-xs text-surface-400 mt-0.5">{t("analysis.poweredByClaude")}</p>
+                  <p className="text-xs text-surface-400 mt-0.5">{t("analysis.poweredByGemini")}</p>
                 </div>
                 <button onClick={generateInsights} disabled={isInsightsLoading} className="btn-primary flex items-center gap-2 px-4 py-2 text-sm disabled:opacity-50">
                   <Sparkles size={14} />

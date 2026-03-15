@@ -15,18 +15,34 @@ BS4-7 require user confirmation (stored as completed flags on SavingsGoal).
 """
 from sqlalchemy.orm import Session
 from app.models.ramsey import Debt, SavingsGoal
+from app.models.profile import FinancialProfile
 from app.services.financial_service import get_income_vs_expense
 
 BS1_TARGET = 1000.0
 
 
 def get_monthly_expenses(db: Session, user_id: int) -> float:
-    """Average monthly expenses over the last 3 months."""
+    """Average monthly expenses over the last 3 months.
+    Falls back to profile total charges if no transactions recorded yet."""
     trends = get_income_vs_expense(db, user_id, months=3)
-    if not trends:
-        return 0.0
-    total = sum(t["expenses"] for t in trends)
-    return total / len(trends)
+    transaction_total = sum(t["expenses"] for t in trends) if trends else 0.0
+    if transaction_total > 0:
+        return transaction_total / len(trends)
+
+    # Fallback: use profile monthly charges (food + transport + utilities + housing + custom)
+    profile = db.query(FinancialProfile).filter(FinancialProfile.user_id == user_id).first()
+    if profile:
+        custom_total = sum(c.get("amount", 0) for c in (profile.custom_charges or []))
+        profile_charges = sum(filter(None, [
+            profile.housing_amount,
+            profile.food_budget,
+            profile.transport_budget,
+            profile.utilities_budget,
+            profile.other_charges,
+        ])) + custom_total
+        if profile_charges > 0:
+            return profile_charges
+    return 0.0
 
 
 def get_debts(db: Session, user_id: int) -> list[dict]:

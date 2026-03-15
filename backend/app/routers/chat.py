@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 
 from app.database import get_db
@@ -23,6 +23,7 @@ class ChatResponse(BaseModel):
 @router.post("", response_model=ChatResponse)
 async def chat(
     chat_data: ChatMessage,
+    lang: str = Query(default="en"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -31,5 +32,6 @@ async def chat(
         user_id=current_user.id,
         message=chat_data.message,
         conversation_history=chat_data.conversation_history,
+        lang=lang,
     )
     return {"response": response, "conversation_history": updated_history}

@@ -82,6 +82,24 @@ export default function DashboardPage() {
           </Link>
         )}
 
+        {/* Profile CTA when empty */}
+        {!isDataLoading && !profile && (
+          <Link href="/financial-profile" className="block mb-6 animate-fade-in">
+            <div className="rounded-2xl border-2 border-dashed border-brand-200 bg-brand-50/40 px-6 py-5 flex items-center justify-between hover:border-brand-400 hover:bg-brand-50 transition-all">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center flex-shrink-0">
+                  <User size={18} className="text-brand-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-brand-800">{t("dashboard.completeProfile")}</p>
+                  <p className="text-xs text-brand-500 mt-0.5">{t("dashboard.completeProfileDesc")}</p>
+                </div>
+              </div>
+              <ChevronRight size={18} className="text-brand-400 flex-shrink-0" />
+            </div>
+          </Link>
+        )}
+
         {/* Profile Summary Banner */}
         {profile && (
           <Link href="/financial-profile" className="block mb-6 animate-fade-in">
@@ -131,7 +149,7 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="animate-slide-up [animation-delay:0ms]">
-            <StatCard title={t("dashboard.totalExpenses")} value={`$${spending?.total_expenses.toFixed(2) ?? "0.00"}`} icon={<TrendingDown size={18} />} changeType="negative" />
+            <StatCard title={t("dashboard.totalExpenses")} value={`${spending?.total_expenses.toFixed(2) ?? "0.00"} ${profile?.currency ?? ""}`} icon={<TrendingDown size={18} />} changeType="negative" />
           </div>
           <div className="animate-slide-up [animation-delay:50ms]">
             <StatCard title={t("dashboard.transactions")} value={String(spending?.transaction_count ?? 0)} icon={<DollarSign size={18} />} />

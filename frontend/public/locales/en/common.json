@@ -72,7 +72,9 @@
     "month": "month",
     "children": "child(ren)",
     "monthlySavings": "Monthly savings",
-    "housingCost": "Housing"
+    "housingCost": "Housing",
+    "completeProfile": "Complete your financial profile",
+    "completeProfileDesc": "Add your income and expenses so the AI can personalize all your advice"
   },
   "transactions": {
     "title": "Transactions",
@@ -98,7 +100,8 @@
     "title": "Analysis",
     "subtitle": "Deep dive into your financial data",
     "aiInsights": "AI Financial Insights",
-    "poweredByClaude": "Powered by Claude",
+    "poweredByClaude": "Powered by Gemini AI",
+    "poweredByGemini": "Powered by Gemini AI",
     "generateInsights": "Generate Insights",
     "analyzing": "Analyzing…",
     "insightsPlaceholder": "Click \"Generate Insights\" to get AI-powered analysis of your spending patterns and personalized recommendations.",
@@ -108,7 +111,8 @@
     "title": "AI Advisor",
     "subtitle": "Get personalized financial advice",
     "advisorName": "FinWise AI Advisor",
-    "poweredByClaude": "Powered by Claude",
+    "poweredByClaude": "Powered by Gemini AI",
+    "poweredByGemini": "Powered by Gemini AI",
     "emptyTitle": "How can I help with your finances?",
     "emptyDescription": "Ask me about budgets, spending habits, saving strategies, or get personalized advice.",
     "suggestion1": "How can I save more money?",

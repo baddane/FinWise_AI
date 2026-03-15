@@ -142,9 +142,10 @@ export const profileApi = {
 export const chatApi = {
   sendMessage: async (
     message: string,
-    conversation_history: ChatMessage[]
+    conversation_history: ChatMessage[],
+    lang = "en"
   ): Promise<{ response: string; conversation_history: ChatMessage[] }> => {
-    const { data } = await api.post("/api/chat", { message, conversation_history });
+    const { data } = await api.post("/api/chat", { message, conversation_history }, { params: { lang } });
     return data;
   },
 };

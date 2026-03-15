@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Plus, Trash2, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
 import { Sidebar } from "@/components/Layout/Sidebar";
-import { transactionsApi } from "@/services/api";
+import { transactionsApi, profileApi } from "@/services/api";
 import { Transaction } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
 import { format } from "date-fns";
@@ -19,6 +19,7 @@ export default function TransactionsPage() {
   const { t } = useTranslation("common");
   const { isAuthenticated, isLoading, logout } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [currency, setCurrency] = useState("$");
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
@@ -36,9 +37,13 @@ export default function TransactionsPage() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    transactionsApi.list({ limit: 100 })
-      .then(setTransactions)
-      .finally(() => setIsDataLoading(false));
+    Promise.all([
+      transactionsApi.list({ limit: 100 }),
+      profileApi.get(),
+    ]).then(([txs, profile]) => {
+      setTransactions(txs);
+      if (profile?.currency) setCurrency(profile.currency);
+    }).finally(() => setIsDataLoading(false));
   }, [isAuthenticated]);
 
   const handleLogout = () => { logout(); router.push("/login"); };
@@ -163,7 +168,7 @@ export default function TransactionsPage() {
                     <td className="px-5 py-3.5 text-surface-500">{tx.merchant ?? "—"}</td>
                     <td className="px-5 py-3.5 text-surface-500">{format(new Date(tx.date), "MMM d, yyyy")}</td>
                     <td className={`px-5 py-3.5 text-right font-semibold tabular-nums ${tx.type === "income" ? "text-emerald-600" : "text-red-600"}`}>
-                      {tx.type === "income" ? "+" : "-"}${tx.amount.toFixed(2)}
+                      {tx.type === "income" ? "+" : "-"}{tx.amount.toFixed(2)} {currency}
                     </td>
                     <td className="px-5 py-3.5 text-right">
                       <button onClick={() => handleDelete(tx.id)} className="text-surface-300 hover:text-red-500 transition-colors" title="Delete">
