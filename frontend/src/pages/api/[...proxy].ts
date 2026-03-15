@@ -41,11 +41,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     body = await streamToBuffer(req as unknown as Readable);
   }
 
-  const response = await fetch(url, {
-    method: req.method,
-    headers: forwardHeaders,
-    body: body ? (body as unknown as BodyInit) : undefined,
-  });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: req.method,
+      headers: forwardHeaders,
+      body: body ? (body as unknown as BodyInit) : undefined,
+    });
+  } catch {
+    res.status(502).json({ detail: "Backend service unreachable. Check BACKEND_URL configuration." });
+    return;
+  }
 
   res.status(response.status);
   const ct = response.headers.get("content-type");
