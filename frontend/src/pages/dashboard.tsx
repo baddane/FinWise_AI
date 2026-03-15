@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { DollarSign, TrendingDown, TrendingUp, Wallet, ChevronRight } from "lucide-react";
+import { DollarSign, TrendingDown, TrendingUp, Wallet, ChevronRight, PiggyBank, User } from "lucide-react";
 import Link from "next/link";
 import { Sidebar } from "@/components/Layout/Sidebar";
 import { StatCard } from "@/components/Dashboard/StatCard";
 import { BudgetProgress } from "@/components/Dashboard/BudgetProgress";
 import { SpendingChart } from "@/components/Charts/SpendingChart";
 import { CategoryPieChart } from "@/components/Charts/CategoryPieChart";
-import { analysisApi, ramseyApi } from "@/services/api";
+import { analysisApi, ramseyApi, profileApi } from "@/services/api";
 import { Budget, MonthlyTrend, SpendingSummary, BabyStepsStatus } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslation } from "next-i18next";
@@ -26,6 +26,8 @@ export default function DashboardPage() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [monthlyTrends, setMonthlyTrends] = useState<MonthlyTrend[]>([]);
   const [babySteps, setBabySteps] = useState<BabyStepsStatus | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [profile, setProfile] = useState<any>(null);
   const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
@@ -39,12 +41,14 @@ export default function DashboardPage() {
       analysisApi.getBudgets(),
       analysisApi.getMonthlyTrends(),
       ramseyApi.getStatus(),
+      profileApi.get(),
     ])
-      .then(([spendingData, budgetData, trendsData, stepsData]) => {
+      .then(([spendingData, budgetData, trendsData, stepsData, profileData]) => {
         setSpending(spendingData);
         setBudgets(budgetData);
         setMonthlyTrends(trendsData);
         setBabySteps(stepsData);
+        setProfile(profileData);
       })
       .finally(() => setIsDataLoading(false));
   }, [isAuthenticated]);
@@ -74,6 +78,53 @@ export default function DashboardPage() {
                 <p className="text-brand-200 text-xs mt-0.5">{t(`ramsey.step${babySteps.current_step}Desc`)}</p>
               </div>
               <ChevronRight className="text-brand-200 flex-shrink-0" size={20} />
+            </div>
+          </Link>
+        )}
+
+        {/* Profile Summary Banner */}
+        {profile && (
+          <Link href="/financial-profile" className="block mb-6 animate-fade-in">
+            <div className="bg-white rounded-2xl border border-surface-200 px-6 py-4 flex items-center justify-between hover:border-brand-300 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+                  <User size={18} className="text-brand-600" />
+                </div>
+                <div>
+                  <p className="text-xs text-surface-400 font-medium">{t("dashboard.profileSummary")}</p>
+                  <p className="text-sm font-semibold text-surface-800 mt-0.5">
+                    {Number(profile.salary).toLocaleString()} {profile.currency} / {t("dashboard.month")}
+                    <span className="mx-2 text-surface-300">·</span>
+                    {profile.country || "—"}
+                    {profile.num_children > 0 && (
+                      <><span className="mx-2 text-surface-300">·</span>{profile.num_children} {t("dashboard.children")}</>
+                    )}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-6">
+                {profile.savings_monthly > 0 && (
+                  <div className="text-right hidden sm:block">
+                    <p className="text-xs text-surface-400">{t("dashboard.monthlySavings")}</p>
+                    <p className="text-sm font-bold text-blue-600">
+                      {Number(profile.savings_monthly).toLocaleString()} {profile.currency}
+                      <span className="text-xs font-normal text-surface-400 ml-1">
+                        ({profile.salary > 0 ? ((profile.savings_monthly / profile.salary) * 100).toFixed(0) : 0}%)
+                      </span>
+                    </p>
+                  </div>
+                )}
+                <div className="text-right hidden sm:block">
+                  <p className="text-xs text-surface-400">{t("dashboard.housingCost")}</p>
+                  <p className="text-sm font-bold text-surface-700">
+                    {profile.housing_amount ? `${Number(profile.housing_amount).toLocaleString()} ${profile.currency}` : "—"}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 text-brand-500">
+                  <PiggyBank size={16} />
+                  <ChevronRight size={16} />
+                </div>
+              </div>
             </div>
           </Link>
         )}

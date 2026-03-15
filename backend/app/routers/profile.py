@@ -31,6 +31,8 @@ class FinancialProfileIn(BaseModel):
     utilities_budget: float | None = None
     other_charges: float | None = None
     custom_charges: list[CustomCharge] = []
+    savings_monthly: float | None = None
+    savings_goal: float | None = None
 
     @model_validator(mode="before")
     @classmethod
@@ -38,7 +40,10 @@ class FinancialProfileIn(BaseModel):
         """React Hook Form sends '' for empty number inputs — coerce to None."""
         if not isinstance(data, dict):
             return data
-        nullable_floats = {"housing_amount", "food_budget", "transport_budget", "utilities_budget", "other_charges"}
+        nullable_floats = {
+            "housing_amount", "food_budget", "transport_budget", "utilities_budget",
+            "other_charges", "savings_monthly", "savings_goal",
+        }
         for field in nullable_floats:
             if data.get(field) == "":
                 data[field] = None

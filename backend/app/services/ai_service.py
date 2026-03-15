@@ -46,6 +46,22 @@ Core Ramsey principles you always enforce:
 - Emergency fund before anything else.
 - Intensity and sacrifice now = freedom later. "Live like no one else, so later you can live like no one else."
 
+You have access to the user's complete financial profile including:
+- Their monthly salary, currency, and employment type
+- Their country and city (adapt advice to local context, savings vehicles, tax benefits)
+- Their family situation (number of children)
+- Their housing costs (rent/mortgage)
+- Their monthly charges (food, transport, utilities, custom subscriptions)
+- Their monthly savings amount and savings goal
+- Their total disposable income and current savings rate
+
+ALWAYS use this profile data to give hyper-personalized advice:
+- Reference their actual income and charges by name and amount
+- Compare their savings rate to the 20% rule (or BS4's 15% retirement target)
+- Adapt recommendations to their country's financial products and cost of living
+- Factor in their children when advising on budget and savings
+- If savings_monthly is 0 or missing, flag it as a priority to fix immediately
+
 You know the user's current Baby Step from their financial data.
 Always give advice specific to their current step. Be encouraging but direct — like Ramsey himself.
 Use markdown tables where relevant. Format responses clearly with sections, bullet points and tables."""
@@ -118,14 +134,22 @@ async def generate_profile_advice(profile, lang: str = "en") -> str:
         profile.utilities_budget,
         profile.other_charges,
     ])) + custom_total
-    disposable = profile.salary - total_charges
-    savings_rate = (disposable / profile.salary * 100) if profile.salary > 0 else 0
+    savings_monthly = profile.savings_monthly or 0
+    disposable = profile.salary - total_charges - savings_monthly
+    declared_savings_rate = (savings_monthly / profile.salary * 100) if profile.salary > 0 else 0
+    total_outflow_rate = ((total_charges + savings_monthly) / profile.salary * 100) if profile.salary > 0 else 0
 
     custom_lines = ""
     if custom_charges:
         custom_lines = "\nAdditional custom charges:\n" + "\n".join(
             f"  - {c['name']}: {c['amount']} {profile.currency}/month" for c in custom_charges
         )
+
+    savings_lines = ""
+    if savings_monthly > 0:
+        savings_lines = f"\n- Monthly Savings Contribution: {savings_monthly} {profile.currency}/month"
+    if profile.savings_goal:
+        savings_lines += f"\n- Savings Goal (target): {profile.savings_goal} {profile.currency}"
 
     profile_summary = f"""
 User Financial Profile:
@@ -137,10 +161,11 @@ User Financial Profile:
 - Food Budget: {profile.food_budget or 0} {profile.currency}/month
 - Transport Budget: {profile.transport_budget or 0} {profile.currency}/month
 - Utilities (electricity, internet, etc.): {profile.utilities_budget or 0} {profile.currency}/month
-- Other Charges: {profile.other_charges or 0} {profile.currency}/month{custom_lines}
+- Other Charges: {profile.other_charges or 0} {profile.currency}/month{custom_lines}{savings_lines}
 - Total Monthly Charges: {total_charges:.2f} {profile.currency}
-- Estimated Disposable Income: {disposable:.2f} {profile.currency}
-- Current Savings Rate: {savings_rate:.1f}%
+- Declared Monthly Savings: {savings_monthly:.2f} {profile.currency} ({declared_savings_rate:.1f}% of salary)
+- Remaining Disposable Income (after charges & savings): {disposable:.2f} {profile.currency}
+- Total Outflow Rate: {total_outflow_rate:.1f}% of salary
 """
 
     lang_name = LANG_NAMES.get(lang, "English")
@@ -197,6 +222,7 @@ def _get_financial_context(db: Session, user_id: int) -> str:
             profile.housing_amount, profile.food_budget,
             profile.transport_budget, profile.utilities_budget, profile.other_charges,
         ])) + custom_total
+        savings_monthly = profile.savings_monthly or 0
         profile_data = {
             "salary": profile.salary,
             "currency": profile.currency,
@@ -211,9 +237,11 @@ def _get_financial_context(db: Session, user_id: int) -> str:
             "utilities_budget": profile.utilities_budget,
             "other_charges": profile.other_charges,
             "custom_charges": custom_charges,
+            "savings_monthly": savings_monthly,
+            "savings_goal": profile.savings_goal,
             "total_charges": round(total_charges, 2),
-            "disposable_income": round(profile.salary - total_charges, 2),
-            "savings_rate_pct": round((profile.salary - total_charges) / profile.salary * 100, 1) if profile.salary > 0 else 0,
+            "disposable_income": round(profile.salary - total_charges - savings_monthly, 2),
+            "declared_savings_rate_pct": round(savings_monthly / profile.salary * 100, 1) if profile.salary > 0 else 0,
         }
 
     context = {

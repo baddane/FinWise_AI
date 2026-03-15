@@ -35,6 +35,10 @@ class FinancialProfile(Base):
     # Custom charges: [{"name": "Netflix", "amount": 15.99}, ...]
     custom_charges = Column(JSON, nullable=True, default=list)
 
+    # Savings
+    savings_monthly = Column(Float, nullable=True)   # Monthly savings contribution
+    savings_goal = Column(Float, nullable=True)       # Total savings target
+
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 

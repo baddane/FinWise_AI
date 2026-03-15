@@ -67,7 +67,12 @@
     "budgetStatus": "État du budget",
     "trackSpending": "Suivez vos limites de dépenses",
     "noData": "Aucune donnée",
-    "noDataDescription": "Commencez par ajouter des transactions et des budgets pour voir votre aperçu financier ici."
+    "noDataDescription": "Commencez par ajouter des transactions et des budgets pour voir votre aperçu financier ici.",
+    "profileSummary": "Profil financier",
+    "month": "mois",
+    "children": "enfant(s)",
+    "monthlySavings": "Épargne mensuelle",
+    "housingCost": "Logement"
   },
   "transactions": {
     "title": "Transactions",
@@ -163,6 +168,12 @@
     "transportBudget": "Transport",
     "utilitiesBudget": "Factures (électricité, internet…)",
     "otherCharges": "Autres charges",
+    "savingsSection": "Épargne",
+    "savingsMonthly": "Épargne mensuelle",
+    "savingsMonthlyHint": "Montant que vous mettez de côté chaque mois",
+    "savingsMonthlyLabel": "Épargne / mois",
+    "savingsGoal": "Objectif d'épargne",
+    "savingsGoalHint": "Capital total que vous souhaitez atteindre",
     "totalCharges": "Total charges",
     "disposable": "Reste à vivre",
     "savingsRate": "Taux d'épargne",

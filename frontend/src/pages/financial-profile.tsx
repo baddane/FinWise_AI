@@ -6,7 +6,7 @@ import { useTranslation } from "next-i18next";
 import { useForm } from "react-hook-form";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Sparkles, User, MapPin, Home, Users, Wallet, Loader2, ChevronDown, Plus, Trash2 } from "lucide-react";
+import { Sparkles, User, MapPin, Home, Users, Wallet, Loader2, ChevronDown, Plus, Trash2, PiggyBank } from "lucide-react";
 import { Sidebar } from "@/components/Layout/Sidebar";
 import { profileApi } from "@/services/api";
 import { useAuth } from "@/hooks/useAuth";
@@ -29,6 +29,8 @@ interface ProfileForm {
   transport_budget: number;
   utilities_budget: number;
   other_charges: number;
+  savings_monthly: number;
+  savings_goal: number;
 }
 
 const CURRENCIES = ["USD", "EUR", "GBP", "CAD", "MAD", "XOF", "DZD", "TND", "CHF", "XAF", "CFA"];
@@ -60,10 +62,10 @@ export default function FinancialProfilePage() {
   const food = watch("food_budget") || 0;
   const transport = watch("transport_budget") || 0;
   const utilities = watch("utilities_budget") || 0;
-  const other = watch("other_charges") || 0;
+  const savingsMonthly = watch("savings_monthly") || 0;
   const customTotal = customCharges.reduce((s, c) => s + (Number(c.amount) || 0), 0);
-  const totalCharges = Number(housingAmt) + Number(food) + Number(transport) + Number(utilities) + Number(other) + customTotal;
-  const disposable = Number(salary) - totalCharges;
+  const totalCharges = Number(housingAmt) + Number(food) + Number(transport) + Number(utilities) + customTotal;
+  const disposable = Number(salary) - totalCharges - Number(savingsMonthly);
 
   useEffect(() => {
     profileApi.get().then((data) => {
@@ -137,10 +139,14 @@ export default function FinancialProfilePage() {
 
           {/* Live Summary Bar */}
           {salary > 0 && (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <div className="bg-white rounded-xl border border-surface-200 p-4 text-center">
                 <p className="text-xs text-surface-400 font-medium uppercase tracking-wide">{t("profile.totalCharges")}</p>
                 <p className="text-xl font-bold text-red-500 mt-1">{totalCharges.toLocaleString()}</p>
+              </div>
+              <div className="bg-white rounded-xl border border-surface-200 p-4 text-center">
+                <p className="text-xs text-surface-400 font-medium uppercase tracking-wide">{t("profile.savingsMonthlyLabel")}</p>
+                <p className="text-xl font-bold text-blue-600 mt-1">{Number(savingsMonthly).toLocaleString()}</p>
               </div>
               <div className="bg-white rounded-xl border border-surface-200 p-4 text-center">
                 <p className="text-xs text-surface-400 font-medium uppercase tracking-wide">{t("profile.disposable")}</p>
@@ -150,8 +156,8 @@ export default function FinancialProfilePage() {
               </div>
               <div className="bg-white rounded-xl border border-surface-200 p-4 text-center">
                 <p className="text-xs text-surface-400 font-medium uppercase tracking-wide">{t("profile.savingsRate")}</p>
-                <p className={`text-xl font-bold mt-1 ${(disposable / salary) >= 0.2 ? "text-green-600" : "text-amber-500"}`}>
-                  {salary > 0 ? `${((disposable / salary) * 100).toFixed(1)}%` : "—"}
+                <p className={`text-xl font-bold mt-1 ${(Number(savingsMonthly) / salary) >= 0.2 ? "text-green-600" : "text-amber-500"}`}>
+                  {salary > 0 ? `${((Number(savingsMonthly) / salary) * 100).toFixed(1)}%` : "—"}
                 </p>
               </div>
             </div>
@@ -201,6 +207,36 @@ export default function FinancialProfilePage() {
                     </select>
                     <ChevronDown size={14} className="absolute right-3 top-3 text-surface-400 pointer-events-none" />
                   </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Savings */}
+            <section className="bg-white rounded-2xl border border-surface-200 p-6 space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <PiggyBank size={18} className="text-brand-600" />
+                <h2 className="font-semibold text-surface-800">{t("profile.savingsSection")}</h2>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 mb-1">{t("profile.savingsMonthly")}</label>
+                  <input
+                    type="number" step="0.01" min={0}
+                    {...register("savings_monthly", { min: 0 })}
+                    className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
+                    placeholder="300"
+                  />
+                  <p className="text-xs text-surface-400 mt-1">{t("profile.savingsMonthlyHint")}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-surface-700 mb-1">{t("profile.savingsGoal")}</label>
+                  <input
+                    type="number" step="0.01" min={0}
+                    {...register("savings_goal", { min: 0 })}
+                    className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
+                    placeholder="10000"
+                  />
+                  <p className="text-xs text-surface-400 mt-1">{t("profile.savingsGoalHint")}</p>
                 </div>
               </div>
             </section>
@@ -317,15 +353,6 @@ export default function FinancialProfilePage() {
                     {...register("utilities_budget", { min: 0 })}
                     className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
                     placeholder="100"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-surface-700 mb-1">{t("profile.otherCharges")}</label>
-                  <input
-                    type="number" step="0.01" min={0}
-                    {...register("other_charges", { min: 0 })}
-                    className="w-full border border-surface-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
-                    placeholder="200"
                   />
                 </div>
               </div>

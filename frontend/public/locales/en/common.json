@@ -67,7 +67,12 @@
     "budgetStatus": "Budget Status",
     "trackSpending": "Track your spending limits",
     "noData": "No data yet",
-    "noDataDescription": "Start by adding transactions and budgets to see your financial overview here."
+    "noDataDescription": "Start by adding transactions and budgets to see your financial overview here.",
+    "profileSummary": "Financial profile",
+    "month": "month",
+    "children": "child(ren)",
+    "monthlySavings": "Monthly savings",
+    "housingCost": "Housing"
   },
   "transactions": {
     "title": "Transactions",
@@ -163,6 +168,12 @@
     "transportBudget": "Transport",
     "utilitiesBudget": "Utilities (electricity, internet…)",
     "otherCharges": "Other Charges",
+    "savingsSection": "Savings",
+    "savingsMonthly": "Monthly savings",
+    "savingsMonthlyHint": "Amount you set aside each month",
+    "savingsMonthlyLabel": "Savings / month",
+    "savingsGoal": "Savings goal",
+    "savingsGoalHint": "Total capital you want to reach",
     "totalCharges": "Total Charges",
     "disposable": "Disposable Income",
     "savingsRate": "Savings Rate",
