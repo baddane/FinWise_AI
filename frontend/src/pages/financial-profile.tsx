@@ -79,7 +79,11 @@ export default function FinancialProfilePage() {
     setSaving(true);
     setError(null);
     try {
-      await profileApi.upsert({ ...values, custom_charges: customCharges });
+      // React Hook Form returns "" for empty number inputs — convert to null
+      const cleaned = Object.fromEntries(
+        Object.entries(values).map(([k, v]) => [k, v === "" ? null : v])
+      );
+      await profileApi.upsert({ ...cleaned, custom_charges: customCharges });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch {

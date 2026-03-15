@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -31,6 +31,18 @@ class FinancialProfileIn(BaseModel):
     utilities_budget: float | None = None
     other_charges: float | None = None
     custom_charges: list[CustomCharge] = []
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_empty_strings(cls, data: dict) -> dict:
+        """React Hook Form sends '' for empty number inputs — coerce to None."""
+        if not isinstance(data, dict):
+            return data
+        nullable_floats = {"housing_amount", "food_budget", "transport_budget", "utilities_budget", "other_charges"}
+        for field in nullable_floats:
+            if data.get(field) == "":
+                data[field] = None
+        return data
 
 
 class FinancialProfileOut(FinancialProfileIn):
