@@ -51,7 +51,7 @@ export const authApi = {
 };
 
 export const transactionsApi = {
-  list: async (params?: { skip?: number; limit?: number; type?: string }): Promise<Transaction[]> => {
+  list: async (params?: { skip?: number; limit?: number; type?: string; start_date?: string; end_date?: string }): Promise<Transaction[]> => {
     const { data } = await api.get("/api/transactions", { params });
     return data;
   },

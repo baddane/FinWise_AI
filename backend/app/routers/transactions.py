@@ -37,14 +37,20 @@ class TransactionResponse(BaseModel):
 @router.get("", response_model=list[TransactionResponse])
 async def list_transactions(
     skip: int = Query(default=0, ge=0),
-    limit: int = Query(default=50, le=200),
+    limit: int = Query(default=50, le=500),
     type: TransactionType | None = None,
+    start_date: datetime | None = Query(default=None),
+    end_date: datetime | None = Query(default=None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     query = db.query(Transaction).filter(Transaction.user_id == current_user.id)
     if type:
         query = query.filter(Transaction.type == type)
+    if start_date:
+        query = query.filter(Transaction.date >= start_date)
+    if end_date:
+        query = query.filter(Transaction.date <= end_date)
     return query.order_by(Transaction.date.desc()).offset(skip).limit(limit).all()
 
 

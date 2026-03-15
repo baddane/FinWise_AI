@@ -9,7 +9,8 @@
     "logout": "Logout",
     "menu": "Menu",
     "financialAdvisor": "Financial Advisor",
-    "financialProfile": "My Profile"
+    "financialProfile": "My Profile",
+    "monthlyTracker": "Monthly Tracker"
   },
   "auth": {
     "createAccount": "Create your account",
@@ -255,5 +256,31 @@
     "dtype_personal": "Personal loan",
     "dtype_mortgage": "Mortgage",
     "dtype_other": "Other"
+  },
+  "tracker": {
+    "title": "Expense Tracker",
+    "totalExpenses": "Month Expenses",
+    "totalIncome": "Month Income",
+    "budgetUsed": "Budget Used",
+    "budgetProgress": "Progress vs profile budget",
+    "net": "Net Balance",
+    "addEntry": "Add an entry",
+    "expense": "Expense",
+    "income": "Income",
+    "descriptionPlaceholder": "Description (e.g. Groceries, Gas…)",
+    "amountPlaceholder": "Amount",
+    "add": "Add",
+    "adding": "Adding…",
+    "entries": "This month's entries",
+    "entriesCount": "entry(ies)",
+    "colType": "Type",
+    "colDescription": "Description",
+    "colDate": "Date",
+    "colAmount": "Amount",
+    "noDescription": "No description",
+    "empty": "No entries this month. Add your first expense!",
+    "loading": "Loading…",
+    "invalidEntry": "Please enter a description and a valid amount.",
+    "saveFailed": "Error while adding entry. Please try again."
   }
 }

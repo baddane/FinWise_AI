@@ -9,7 +9,8 @@
     "logout": "Déconnexion",
     "menu": "Menu",
     "financialAdvisor": "Conseiller Financier",
-    "financialProfile": "Mon Profil"
+    "financialProfile": "Mon Profil",
+    "monthlyTracker": "Traqueur du mois"
   },
   "auth": {
     "createAccount": "Créer votre compte",
@@ -255,5 +256,31 @@
     "dtype_personal": "Prêt personnel",
     "dtype_mortgage": "Hypothèque",
     "dtype_other": "Autre"
+  },
+  "tracker": {
+    "title": "Traqueur de dépenses",
+    "totalExpenses": "Dépenses du mois",
+    "totalIncome": "Revenus du mois",
+    "budgetUsed": "Budget utilisé",
+    "budgetProgress": "Progression vs budget profil",
+    "net": "Solde net",
+    "addEntry": "Ajouter une entrée",
+    "expense": "Dépense",
+    "income": "Revenu",
+    "descriptionPlaceholder": "Désignation (ex : Courses, Essence…)",
+    "amountPlaceholder": "Montant",
+    "add": "Ajouter",
+    "adding": "Ajout…",
+    "entries": "Entrées du mois",
+    "entriesCount": "entrée(s)",
+    "colType": "Type",
+    "colDescription": "Désignation",
+    "colDate": "Date",
+    "colAmount": "Montant",
+    "noDescription": "Sans désignation",
+    "empty": "Aucune entrée ce mois-ci. Ajoutez votre première dépense !",
+    "loading": "Chargement…",
+    "invalidEntry": "Veuillez saisir une désignation et un montant valide.",
+    "saveFailed": "Erreur lors de l'ajout. Veuillez réessayer."
   }
 }

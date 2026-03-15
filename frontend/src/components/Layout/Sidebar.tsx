@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { LayoutDashboard, CreditCard, BarChart3, MessageSquare, Settings, LogOut, Sparkles, ListChecks, UserCircle } from "lucide-react";
+import { LayoutDashboard, CreditCard, BarChart3, MessageSquare, Settings, LogOut, Sparkles, ListChecks, UserCircle, CalendarRange } from "lucide-react";
 import { clsx } from "clsx";
 import { useTranslation } from "next-i18next";
 
@@ -17,6 +17,7 @@ export function Sidebar({ onLogout }: SidebarProps) {
     { href: "/dashboard", label: t("nav.dashboard"), icon: LayoutDashboard },
     { href: "/babysteps", label: t("nav.babySteps"), icon: ListChecks },
     { href: "/transactions", label: t("nav.transactions"), icon: CreditCard },
+    { href: "/monthly-tracker", label: t("nav.monthlyTracker"), icon: CalendarRange },
     { href: "/analysis", label: t("nav.analysis"), icon: BarChart3 },
     { href: "/chat", label: t("nav.aiAdvisor"), icon: MessageSquare },
     { href: "/financial-profile", label: t("nav.financialProfile"), icon: UserCircle },
