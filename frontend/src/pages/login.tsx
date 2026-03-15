@@ -69,28 +69,30 @@ export default function LoginPage() {
     [googleLogin, router, t]
   );
 
-  // Render Google button once script + element are ready
+  // Render Google button — retry until both the script and the div are ready
   useEffect(() => {
-    if (!GOOGLE_CLIENT_ID) return;
+    if (!GOOGLE_CLIENT_ID || emailSent) return;
+    let cancelled = false;
     const tryInit = () => {
+      if (cancelled) return;
       const el = document.getElementById("google-btn");
-      if (!el) return;
-      if (window.google?.accounts?.id) {
-        window.google.accounts.id.initialize({
-          client_id: GOOGLE_CLIENT_ID,
-          callback: handleGoogleResponse,
-        });
-        window.google.accounts.id.renderButton(el, {
-          theme: "outline",
-          size: "large",
-          width: el.offsetWidth || 360,
-          text: isRegister ? "signup_with" : "signin_with",
-        });
-      } else {
-        setTimeout(tryInit, 200);
+      if (!el || !window.google?.accounts?.id) {
+        setTimeout(tryInit, 150);
+        return;
       }
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleResponse,
+      });
+      window.google.accounts.id.renderButton(el, {
+        theme: "outline",
+        size: "large",
+        width: el.offsetWidth || 360,
+        text: isRegister ? "signup_with" : "signin_with",
+      });
     };
     tryInit();
+    return () => { cancelled = true; };
   }, [isRegister, handleGoogleResponse, emailSent]);
 
   const handleSubmit = async (e: React.FormEvent) => {
